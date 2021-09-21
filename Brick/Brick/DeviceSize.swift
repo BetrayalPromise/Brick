@@ -17,20 +17,4 @@ public extension UIDevice {
     static var bounds: CGRect {
         return CGRect(x: 0, y: 0, width: Self.width, height: Self.height)
     }
-    
-    static var keyWindowSafeEdgeInsets: UIEdgeInsets {
-        var inset: UIEdgeInsets  = UIEdgeInsets.zero
-        if #available(iOS 11.0, *) {
-            inset = UIApplication.shared.keyWindow?.safeAreaInsets ?? .zero
-        }
-        return inset
-    }
-    
-    static var rootControllerSafeEdgeInsets: UIEdgeInsets {
-        var inset: UIEdgeInsets  = UIEdgeInsets.zero
-        if #available(iOS 11.0, *) {
-            inset = UIApplication.shared.keyWindow?.rootViewController?.additionalSafeAreaInsets ?? .zero
-        }
-        return inset
-    }
 }

@@ -1,19 +1,12 @@
-//
-//  ViewController.swift
-//  Brick
-//
-//  Created by 李阳 on 17/9/2021.
-//
-
 import UIKit
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        let layout = BaseLayout(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
+        layout.backgroundColor = .red
+        self.view.addSubview(layout)
     }
-
-
 }
 

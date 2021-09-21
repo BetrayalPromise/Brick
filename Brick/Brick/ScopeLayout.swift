@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 /// 布局尺寸处理
 public enum LayoutScope {

@@ -1,5 +1,4 @@
 import UIKit
-import FrameLayoutKit
 
 class Test0ViewController: UIViewController {
     
@@ -20,6 +19,8 @@ class Test0ViewController: UIViewController {
         l.space = 10
         l.backgroundColor = .black
         v.addSubview(l)
+        
+        l.frame = CGRect.init(x: 0, y: 0, width: 300, height: 200)
         
         for i in 0...10 {
             let label = UILabel(title: "\(i)")

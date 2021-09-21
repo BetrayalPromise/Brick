@@ -1,4 +1,6 @@
 import Foundation
+import CoreGraphics
+import UIKit
 
 /// 主轴向
 public enum MainAxie {
@@ -6,6 +8,15 @@ public enum MainAxie {
     case horizontal
     /// 垂直排列子视图
     case vertical
+}
+
+public enum OverloadStrategy {
+    /// 包裹
+    case wrapItems
+    /// 前切超出部分
+    case cutItems
+    
+    case compressSpace
 }
 
 public enum Orientation {
@@ -41,10 +52,8 @@ open class LinnerLayout: BaseLayout {
         }
     
         switch self.axie {
-        case .horizontal:
-            self.horizontal()
-        case .vertical:
-            self.vertical()
+        case .horizontal: self.horizontal()
+        case .vertical: self.vertical()
         }
     }
     
