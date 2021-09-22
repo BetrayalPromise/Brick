@@ -22,15 +22,16 @@ class Test0ViewController: UIViewController {
         
         l.frame = CGRect.init(x: 0, y: 0, width: 300, height: 200)
         
-        for i in 0...10 {
-            let label = UILabel(title: "\(i)")
+        for i in 0...0 {
+            let label = UILabel(title: "dddaddfaddfdfaddfdfadfadfdddfadkadfkajfkaf\(i)")
             label.numberOfLines = 0
             label.backgroundColor = .yellow
             l.addSubview(label)
-            if i == 2 {
-                label.offset = CGPoint(x: -5, y: 5)
-                label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-            }
+            label.padding = UIEdgeInsets.init(top: 5, left: 5, bottom: 5, right: 5)
+//            if i == 2 {
+//                label.offset = CGPoint(x: -5, y: 5)
+//                label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//            }
         }
     }
 }

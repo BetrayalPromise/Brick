@@ -16,7 +16,7 @@ public enum OverloadStrategy {
     /// 前切超出部分
     case cutItems
     
-    case compressSpace
+    case compress
 }
 
 public enum Orientation {
@@ -32,6 +32,8 @@ open class LinnerLayout: BaseLayout {
     /// 子试图间距
     public var space: CGFloat = 0
     private var handles: [UIView] = []
+    
+    public var overload: OverloadStrategy = .compress
     
     public convenience init(axie: MainAxie) {
         self.init()
@@ -58,36 +60,11 @@ open class LinnerLayout: BaseLayout {
     }
     
     func horizontal() {
-        var svs = self.handles
-        switch self.orientation {
-        case .forward: svs = self.handles
-        case .reverse: svs = self.handles.reversed()
+        switch self.overload {
+        case .wrapItems: self.hWrapper()
+        case .cutItems: self.clipsToBounds = true
+        case .compress: self.compress()
         }
-        var startX: CGFloat = self.padding.left
-        let startY: CGFloat = self.padding.top
-        for item in svs {
-            item.frame = CGRect.zero
-            item.sizeToFit()
-            
-            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.paddingSize)
-            
-            if item.offset != .zero && item.margin != .zero {
-                fatalError("UIView.offset和UIView.margin二者只能设置一个")
-            } else if item.offset != .zero && item.padding == .zero {
-                startX +=  item.width  + self.space
-            } else {
-                startX +=  item.width  + self.space - item.margin.left + item.margin.right
-            }
-        }
-        let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
-        var height: CGFloat = 0.0
-        for item in svs {
-            if item.maxY + self.padding.bottom > height {
-                height = item.maxY + self.padding.bottom
-            }
-        }
-        self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
     }
     
     func vertical() {
@@ -122,4 +99,78 @@ open class LinnerLayout: BaseLayout {
         }
         self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
     }
+}
+
+extension LinnerLayout {
+    func hWrapper() {
+        var svs = self.handles
+        switch self.orientation {
+        case .forward: svs = self.handles
+        case .reverse: svs = self.handles.reversed()
+        }
+        var startX: CGFloat = self.padding.left
+        let startY: CGFloat = self.padding.top
+        for item in svs {
+            item.frame = CGRect.zero
+            item.sizeToFit()
+            
+            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
+            item.frame = CGRect(origin: origin, size: item.paddingSize)
+            
+            if item.offset != .zero && item.margin != .zero {
+                fatalError("UIView.offset和UIView.margin二者只能设置一个")
+            } else if item.offset != .zero && item.padding == .zero {
+                startX +=  item.width  + self.space
+            } else {
+                startX +=  item.width  + self.space - item.margin.left + item.margin.right
+            }
+        }
+        let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+        var height: CGFloat = 0.0
+        for item in svs {
+            if item.maxY + self.padding.bottom > height {
+                height = item.maxY + self.padding.bottom
+            }
+        }
+        self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+    }
+    
+    func compress() {
+        var svs = self.handles
+        switch self.orientation {
+        case .forward: svs = self.handles
+        case .reverse: svs = self.handles.reversed()
+        }
+        var startX: CGFloat = self.padding.left
+        let startY: CGFloat = self.padding.top
+        for item in svs {
+            item.frame = CGRect.zero
+            item.sizeToFit()
+            print(item.frame)
+            
+            if item.paddingSize.width  > self.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right {
+                let size = item.sizeThatFits(CGSize(width: self.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
+                print(size)
+                let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
+                item.frame = CGRect(origin: origin, size: size)
+                item.backgroundColor = .red
+                return
+            }
+            
+            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
+            item.frame = CGRect(origin: origin, size: item.paddingSize)
+            
+            if item.offset != .zero && item.margin != .zero {
+                fatalError("UIView.offset和UIView.margin二者只能设置一个")
+            } else if item.offset != .zero && item.padding == .zero {
+                startX +=  item.width  + self.space
+            } else {
+                startX +=  item.width  + self.space - item.margin.left + item.margin.right
+            }
+        }
+    }
+}
+
+class BoxView: UIView {
+    
 }

@@ -97,17 +97,32 @@ extension UIView {
     }
 }
 
-
 public extension UIView {
     var marginOrigin: CGPoint {
         return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
     }
     
     var paddingSize: CGSize {
-        guard let label = self as? UILabel else {
-            return CGSize(width: self.width + self.padding.left + self.padding.right, height: self.height + self.padding.top + self.padding.bottom)
-        }
-        label.textAlignment = .center
         return CGSize(width: self.width + self.padding.left + self.padding.right, height: self.height + self.padding.top + self.padding.bottom)
+    }
+}
+
+class PaddingLabel: UILabel {
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: self.padding))
+    }
+
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let insets = self.padding
+        var rect = super.textRect(forBounds: bounds.inset(by: insets), limitedToNumberOfLines: numberOfLines)
+        rect.origin.x    -= insets.left
+        rect.origin.y    -= insets.top
+        rect.size.width  += (insets.left + insets.right)
+        rect.size.height += (insets.top + insets.bottom)
+        return rect
+    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        return CGSize.zero
     }
 }
