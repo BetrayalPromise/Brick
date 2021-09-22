@@ -14,19 +14,17 @@ class Test0ViewController: UIViewController {
         v.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         v.scope = .safeArea
         
-        let l = LinnerLayout(axie: .vertical)
+        let l = LinnerLayout(axie: .horizontal)
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
         l.backgroundColor = .blue
         v.addSubview(l)
         
-        for i in 0...5 {
+        for i in 0...0 {
             let label = UILabel(title: "\(i)")
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-            if i == 2 {
-                label.padding = UIEdgeInsets(top: 5, left: 5, bottom: 0, right: 5)
-            }
+            label.offset = CGPoint(x: 5, y: 5)
             l.addSubview(label)
         }
     }

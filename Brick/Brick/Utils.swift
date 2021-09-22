@@ -107,26 +107,30 @@ public extension UIView {
     }
 }
 
-class PaddingLabel: UILabel {
+/// 为了解决UILabel的padding问题
+public class PaddingLabel: UILabel {
     var label: UILabel?
-    
     init(label: UILabel) {
         super.init(frame: .zero)
         self.label = label
         self.padding = label.padding
+        self.offset = label.offset
         self.backgroundColor = .yellow
         self.text = label.text
+        self.font = label.font
+        self.flintiness = label.flintiness
+        self.backgroundColor = label.backgroundColor
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func drawText(in rect: CGRect) {
+    public override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: self.padding))
     }
 
-    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+    public override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         let insets = self.padding
         var rect = super.textRect(forBounds: bounds.inset(by: insets), limitedToNumberOfLines: numberOfLines)
         rect.origin.x    += insets.left
@@ -134,7 +138,7 @@ class PaddingLabel: UILabel {
         return rect
     }
     
-    override func sizeThatFits(_ size: CGSize) -> CGSize {
+    public override func sizeThatFits(_ size: CGSize) -> CGSize {
         let size =  super.sizeThatFits(size)
         return CGSize(width: size.width, height: size.height)
     }
