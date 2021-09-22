@@ -33,7 +33,7 @@ open class LinnerLayout: BaseLayout {
     public var space: CGFloat = 0
     private var handles: [UIView] = []
     
-    public var overload: OverloadStrategy = .compress
+    public var overload: OverloadStrategy = .wrapItems
     
     public convenience init(axie: MainAxie) {
         self.init()
@@ -86,14 +86,14 @@ open class LinnerLayout: BaseLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.paddingSize)
+            item.frame = CGRect(origin: origin, size: item.size)
             
             if item.offset != .zero && item.margin != .zero {
                 fatalError("UIView.offset和UIView.margin二者只能设置一个")
             } else if item.offset != .zero && item.padding == .zero {
-                startY +=  item.height  + self.space
+                startY += item.height - item.padding.top - item.padding.bottom + self.space
             } else {
-                startY +=  item.height  + self.space - item.margin.top + item.margin.bottom
+                startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
             }
         }
         let height: CGFloat = (svs.last?.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
@@ -121,14 +121,14 @@ extension LinnerLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.paddingSize)
+            item.frame = CGRect(origin: origin, size: item.size)
             
             if item.offset != .zero && item.margin != .zero {
                 fatalError("UIView.offset和UIView.margin二者只能设置一个")
             } else if item.offset != .zero && item.padding == .zero {
-                startX +=  item.width  + self.space
+                startX +=  item.width - item.padding.left - item.padding.right  + self.space
             } else {
-                startX +=  item.width  + self.space - item.margin.left + item.margin.right
+                startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
             }
         }
         let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right

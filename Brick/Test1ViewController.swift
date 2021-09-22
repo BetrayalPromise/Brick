@@ -17,8 +17,8 @@ class Test1ViewController: UIViewController {
         label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         label.center = view.center
         print(label.bounds)
-        print(label.paddingSize)
-        label.frame = CGRect(origin: CGPoint(x: 0, y: 0), size:  label.paddingSize)
+        print(label.size)
+        label.frame = CGRect(origin: CGPoint(x: 0, y: 0), size:  label.size)
         label.textAlignment = .center
     }
 }

@@ -89,21 +89,21 @@ extension UIView {
     }
     
     var width: CGFloat {
-        return self.frame.width
+        return self.frame.width + self.padding.left + self.padding.right
     }
     
     var height: CGFloat {
-        return self.frame.height
+        return self.frame.height + self.padding.top + self.padding.bottom
     }
 }
 
 public extension UIView {
-    var marginOrigin: CGPoint {
+    var origin: CGPoint {
         return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
     }
     
-    var paddingSize: CGSize {
-        return CGSize(width: self.width + self.padding.left + self.padding.right, height: self.height + self.padding.top + self.padding.bottom)
+    var size: CGSize {
+        return CGSize(width: self.width, height: self.height)
     }
 }
 
@@ -131,13 +131,11 @@ class PaddingLabel: UILabel {
         var rect = super.textRect(forBounds: bounds.inset(by: insets), limitedToNumberOfLines: numberOfLines)
         rect.origin.x    += insets.left
         rect.origin.y    += insets.top
-        rect.size.width  +=  insets.right
-        rect.size.height +=  insets.bottom
         return rect
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let size =  super.sizeThatFits(size)
-        return CGSize(width: size.width + self.padding.right, height: size.height + self.padding.bottom)
+        return CGSize(width: size.width, height: size.height)
     }
 }
