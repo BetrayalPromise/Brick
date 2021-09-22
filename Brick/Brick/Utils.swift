@@ -44,6 +44,9 @@ extension UIView {
     /// 向内为正值向外为负值
     public var padding: UIEdgeInsets {
         set {
+            if (self is UILabel) && !(self is PaddingLabel) {
+                print("Label设置padding需要使用PaddingLabel子类")
+            }
             objc_setAssociatedObject(self, &AssociatedKey.padding, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         } get {
             return objc_getAssociatedObject(self, &AssociatedKey.padding) as? UIEdgeInsets ?? .zero
@@ -109,23 +112,6 @@ public extension UIView {
 
 /// 为了解决UILabel的padding问题
 public class PaddingLabel: UILabel {
-    var label: UILabel?
-    init(label: UILabel) {
-        super.init(frame: .zero)
-        self.label = label
-        self.padding = label.padding
-        self.offset = label.offset
-        self.backgroundColor = .yellow
-        self.text = label.text
-        self.font = label.font
-        self.flintiness = label.flintiness
-        self.backgroundColor = label.backgroundColor
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     public override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: self.padding))
     }

@@ -41,14 +41,8 @@ open class LinnerLayout: BaseLayout {
     }
     
     open override func addSubview(_ view: UIView) {
-        guard let label = view as? UILabel else {
-            super.addSubview(view)
-            self.handles.append(view);
-            return
-        }
-        let box = PaddingLabel(label: label)
-        super.addSubview(box)
-        self.handles.append(box)
+        super.addSubview(view)
+        self.handles.append(view)
     }
     
     open override func layoutSubviews() {
@@ -69,7 +63,7 @@ open class LinnerLayout: BaseLayout {
         switch self.overload {
         case .wrapItems: self.hWrapper()
         case .cutItems: self.clipsToBounds = true
-        case .compress: self.compress()
+        case .compress: self.hCompress()
         }
     }
     
@@ -141,7 +135,7 @@ extension LinnerLayout {
         self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
     }
     
-    func compress() {
+    func hCompress() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
