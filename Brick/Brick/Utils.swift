@@ -108,6 +108,20 @@ public extension UIView {
 }
 
 class PaddingLabel: UILabel {
+    var label: UILabel?
+    
+    init(label: UILabel) {
+        super.init(frame: .zero)
+        self.label = label
+        self.padding = label.padding
+        self.backgroundColor = .yellow
+        self.text = label.text
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: self.padding))
     }
@@ -115,14 +129,15 @@ class PaddingLabel: UILabel {
     override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         let insets = self.padding
         var rect = super.textRect(forBounds: bounds.inset(by: insets), limitedToNumberOfLines: numberOfLines)
-        rect.origin.x    -= insets.left
-        rect.origin.y    -= insets.top
-        rect.size.width  += (insets.left + insets.right)
-        rect.size.height += (insets.top + insets.bottom)
+        rect.origin.x    += insets.left
+        rect.origin.y    += insets.top
+        rect.size.width  +=  insets.right
+        rect.size.height +=  insets.bottom
         return rect
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        return CGSize.zero
+        let size =  super.sizeThatFits(size)
+        return CGSize(width: size.width + self.padding.right, height: size.height + self.padding.bottom)
     }
 }

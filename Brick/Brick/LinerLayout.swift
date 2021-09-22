@@ -41,8 +41,14 @@ open class LinnerLayout: BaseLayout {
     }
     
     open override func addSubview(_ view: UIView) {
-        super.addSubview(view)
-        self.handles.append(view)
+        guard let label = view as? UILabel else {
+            super.addSubview(view)
+            self.handles.append(view);
+            return
+        }
+        let box = PaddingLabel(label: label)
+        super.addSubview(box)
+        self.handles.append(box)
     }
     
     open override func layoutSubviews() {
@@ -141,36 +147,12 @@ extension LinnerLayout {
         case .forward: svs = self.handles
         case .reverse: svs = self.handles.reversed()
         }
-        var startX: CGFloat = self.padding.left
-        let startY: CGFloat = self.padding.top
+       
         for item in svs {
             item.frame = CGRect.zero
             item.sizeToFit()
             print(item.frame)
-            
-            if item.paddingSize.width  > self.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right {
-                let size = item.sizeThatFits(CGSize(width: self.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
-                print(size)
-                let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-                item.frame = CGRect(origin: origin, size: size)
-                item.backgroundColor = .red
-                return
-            }
-            
-            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.paddingSize)
-            
-            if item.offset != .zero && item.margin != .zero {
-                fatalError("UIView.offset和UIView.margin二者只能设置一个")
-            } else if item.offset != .zero && item.padding == .zero {
-                startX +=  item.width  + self.space
-            } else {
-                startX +=  item.width  + self.space - item.margin.left + item.margin.right
-            }
         }
     }
 }
 
-class BoxView: UIView {
-    
-}
