@@ -85,7 +85,7 @@ public extension UIView {
         case margin
     }
     
-    func size(with: BoxType) -> CGSize {
+    func getSize(with: BoxType) -> CGSize {
         switch with {
         case .padding: return CGSize(width: self.frame.width - self.padding.left - self.padding.right, height: self.frame.height - self.padding.top - self.padding.bottom)
         case .bounds: return CGSize(width: self.frame.width + self.padding.left + self.padding.right, height: self.frame.height + self.padding.top + self.padding.bottom)
@@ -93,7 +93,15 @@ public extension UIView {
         }
     }
     
-    func origin(with: BoxType) -> CGPoint {
+    func setSize(with: BoxType, size: CGSize) {
+        switch with {
+        case .padding: self.frame.size = CGSize(width: size.width + self.padding.left + self.padding.right, height: size.height + self.padding.top + self.padding.bottom)
+        case .bounds: self.frame.size = size
+        case .margin: self.frame.size = CGSize(width: size.width - self.margin.left - self.margin.right, height: size.height - self.margin.top - self.margin.bottom)
+        }
+    }
+    
+    func getOrigin(with: BoxType) -> CGPoint {
         switch with {
         case .padding: return CGPoint(x: self.frame.origin.x + self.padding.left, y: self.frame.origin.y + self.padding.top)
         case .bounds: return self.frame.origin
@@ -101,53 +109,32 @@ public extension UIView {
         }
     }
     
-    func frame(with: BoxType) -> CGRect {
+    func setOrigin(with: BoxType, origin: CGPoint) {
         switch with {
-        case .padding: return CGRect(origin: self.origin(with: .padding), size: self.size(with: .padding))
-        case .bounds: return CGRect(origin: self.origin(with: .bounds), size: self.size(with: .bounds))
-        case .margin: return CGRect(origin: self.origin(with: .margin), size: self.size(with: .margin))
+        case .padding, .bounds, .margin: self.frame.origin = origin
+        }
+    }
+    
+    func getFrame(with: BoxType) -> CGRect {
+        switch with {
+        case .padding: return CGRect(origin: self.getOrigin(with: .padding), size: self.getSize(with: .padding))
+        case .bounds: return CGRect(origin: self.getOrigin(with: .bounds), size: self.getSize(with: .bounds))
+        case .margin: return CGRect(origin: self.getOrigin(with: .margin), size: self.getSize(with: .margin))
+        }
+    }
+    
+    func setFrame(with: BoxType, rect: CGRect) {
+        switch with {
+        case .padding: self.frame = CGRect(x: rect.origin.x - self.padding.left, y: rect.origin.y - self.padding.top, width: rect.width + self.padding.left + self.padding.right, height: rect.height + self.padding.top + self.padding.bottom)
+        case .bounds: self.frame = rect
+        case .margin: self.frame = CGRect(x: rect.origin.x + self.margin.left, y: rect.origin.y + rect.origin.y , width: self.frame.width - self.margin.left - self.margin.right, height: self.frame.height - self.margin.top - self.margin.bottom)
         }
     }
 }
 
-/// 为了解决UILabel的padding问题
-public class LayoutLabel: UILabel {
-    /// 只支持autoSize一种
-    public var wrapper: Wrapper = .autoSize {
-        didSet { self.sizeToFit() }
-    }
-    
-    public override var text: String? {
-        didSet { self.sizeToFit() }
-    }
-    
-    public override var font: UIFont! {
-        didSet { self.sizeToFit() }
-    }
-    
-    public override var attributedText: NSAttributedString? {
-        didSet { self.sizeToFit() }
-    }
-    
-    public override var frame: CGRect {
-        set { super.frame = CGRect(origin: newValue.origin, size: self.sizeThatFits(CGSize(width: 0.0, height: 0.0))) }
-        get { return super.frame }
-    }
-    
-    public override func drawText(in rect: CGRect) {
-        super.drawText(in: rect.inset(by: self.padding))
-    }
 
-    public override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-        let insets = self.padding
-        var rect = super.textRect(forBounds: bounds.inset(by: insets), limitedToNumberOfLines: numberOfLines)
-        rect.origin.x    += insets.left
-        rect.origin.y    += insets.top
-        return rect
-    }
-    
-    public override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let size =  super.sizeThatFits(size)
-        return CGSize(width: size.width + self.padding.left + self.padding.right, height: size.height + self.padding.top + self.padding.bottom)
+extension CGPoint {
+    static func + (left: CGPoint, right: CGPoint) -> CGPoint {
+        return CGPoint(x: left.x + right.x, y: left.y + right.y)
     }
 }

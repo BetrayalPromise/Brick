@@ -80,7 +80,7 @@ extension LinnerLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+            item.frame = CGRect(origin: origin, size: item.getSize(with: .bounds))
             
             switch self.axie {
             case .horizontal:
@@ -137,7 +137,7 @@ extension LinnerLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+            item.frame = CGRect(origin: origin, size: item.getSize(with: .bounds))
             
             switch self.axie {
             case .horizontal:
@@ -196,11 +196,11 @@ extension LinnerLayout {
             }
             item.frame = CGRect.zero
             item.sizeToFit()
-            if item.adaptive == false && item.size(with: .margin).width > self.frame.width - self.padding.left - self.padding.right {
+            if item.adaptive == false && item.getSize(with: .margin).width > self.frame.width - self.padding.left - self.padding.right {
                 fatalError("布局计算错误")
             }
             if item.adaptive == true {
-                
+                print(item.getSize(with: .margin))
             }
         }
     }
