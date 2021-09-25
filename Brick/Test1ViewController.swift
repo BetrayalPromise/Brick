@@ -1,8 +1,6 @@
 import UIKit
 
 class Test1ViewController: UIViewController {
-//    let layout = LinnerLayout()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white

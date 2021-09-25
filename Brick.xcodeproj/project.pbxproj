@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F023C6826FF113B00CAC764 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F023C6726FF113B00CAC764 /* RootViewController.swift */; };
 		6F503D9926FA225800088C8D /* ScopeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9426FA225700088C8D /* ScopeLayout.swift */; };
 		6F503D9A26FA225800088C8D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9526FA225800088C8D /* Utils.swift */; };
 		6F503D9B26FA225800088C8D /* NameSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9626FA225800088C8D /* NameSpace.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F023C6726FF113B00CAC764 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		6F503D9426FA225700088C8D /* ScopeLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScopeLayout.swift; sourceTree = "<group>"; };
 		6F503D9526FA225800088C8D /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6F503D9626FA225800088C8D /* NameSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSpace.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				6FCDD66026F47943008C2C52 /* Brick */,
 				6FCDD64B26F47932008C2C52 /* AppDelegate.swift */,
 				6FCDD64D26F47933008C2C52 /* SceneDelegate.swift */,
+				6F023C6726FF113B00CAC764 /* RootViewController.swift */,
 				6F503DA026FA228500088C8D /* Test0ViewController.swift */,
 				6F503DA126FA228500088C8D /* Test1ViewController.swift */,
 				6FCDD65126F47933008C2C52 /* Main.storyboard */,
@@ -169,6 +172,7 @@
 				6F503D9A26FA225800088C8D /* Utils.swift in Sources */,
 				6F503D9926FA225800088C8D /* ScopeLayout.swift in Sources */,
 				6F503DA326FA228500088C8D /* Test1ViewController.swift in Sources */,
+				6F023C6826FF113B00CAC764 /* RootViewController.swift in Sources */,
 				6F503D9C26FA225800088C8D /* BaseLayout.swift in Sources */,
 				6F503DA226FA228500088C8D /* Test0ViewController.swift in Sources */,
 				6F503D9D26FA225800088C8D /* LinerLayout.swift in Sources */,

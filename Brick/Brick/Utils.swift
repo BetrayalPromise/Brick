@@ -14,15 +14,6 @@ extension UIView {
     }
 }
 
-public extension UILabel {
-    convenience init(title: String, frame: CGRect = .zero) {
-        self.init(frame: frame)
-        self.text = title
-        self.sizeToFit()
-    }
-}
-
-
 extension UIView {
     private struct AssociatedKey {
         static var flintiness = "UIViewAssociatedObjectKeyFlintiness"
@@ -81,10 +72,6 @@ extension UIView {
         } get {
             return objc_getAssociatedObject(self, &AssociatedKey.offset) as? CGPoint ?? .zero
         }
-    }
-    
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
     }
 }
 

@@ -198,7 +198,8 @@ extension LinnerLayout {
                 fatalError("布局计算错误")
             }
             if item.adaptive == true {
-                if  item.size(with: .margin).width > self.width - self.padding.right {
+                print(item.size(with: .margin).width, self.width - self.padding.right)
+                if item.size(with: .margin).width > self.width - self.padding.right {
                     
                 }
             }
