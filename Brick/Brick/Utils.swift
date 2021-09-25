@@ -50,11 +50,11 @@ extension UIView {
         }
     }
     
-    /// 布局内边距
-    /// 向内为正值向外为负值
+    /// 布局内边距,向内为正值向外为负值
+    /// 若视图为LayoutLabel及其之类的话该属性设置必须先于(UILabel.text,UILabel.attributedTex,UILabel.font)t进行设置,否则设置不生效
     public var padding: UIEdgeInsets {
         set {
-            if (self is UILabel) && !(self is PaddingLabel) {
+            if (self is UILabel) && !(self is LayoutLabel) {
                 print("Label设置padding需要使用PaddingLabel子类")
             }
             objc_setAssociatedObject(self, &AssociatedKey.padding, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -81,6 +81,10 @@ extension UIView {
         } get {
             return objc_getAssociatedObject(self, &AssociatedKey.offset) as? CGPoint ?? .zero
         }
+    }
+    
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
     }
 }
 
@@ -116,17 +120,7 @@ extension UIView {
     }
 }
 
-public extension UIView {
-    /// 计算margin
-    var origin: CGPoint {
-        return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
-    }
-    
-    /// 计算padding
-    var size: CGSize {
-        return CGSize(width: self.width, height: self.height)
-    }
-    
+public extension UIView {    
     enum SizeType {
         /// 计算padding范围大小
         case padding
@@ -163,14 +157,17 @@ public extension UIView {
 }
 
 /// 为了解决UILabel的padding问题
-public class PaddingLabel: UILabel {
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.lineBreakMode = .byCharWrapping
+public class LayoutLabel: UILabel {
+    public override var text: String? {
+        didSet { self.sizeToFit() }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    public override var font: UIFont! {
+        didSet { self.sizeToFit() }
+    }
+    
+    public override var attributedText: NSAttributedString? {
+        didSet { self.sizeToFit() }
     }
     
     public override func drawText(in rect: CGRect) {
@@ -187,6 +184,6 @@ public class PaddingLabel: UILabel {
     
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
         let size =  super.sizeThatFits(size)
-        return CGSize(width: size.width, height: size.height)
+        return CGSize(width: size.width + self.padding.left + self.padding.right, height: size.height + self.padding.top + self.padding.bottom)
     }
 }

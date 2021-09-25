@@ -31,4 +31,8 @@ open class ScopeLayout: BaseLayout {
             }
         }
     }
+    
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+    }
 }

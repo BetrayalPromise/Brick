@@ -23,11 +23,11 @@ class Test0ViewController: UIViewController {
         v.addSubview(l)
         
         for i in 0...0 {
-            let label = PaddingLabel(title: ",lklklk大开发fgfhhgf\(i)")
+            let label = LayoutLabel(title: ",lklklk大开发fgfhhgf\(i)")
             label.numberOfLines = 0
             label.adaptive = true
             label.backgroundColor = .yellow
-//            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             l.addSubview(label)
         }
     }
