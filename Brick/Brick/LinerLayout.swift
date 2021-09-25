@@ -87,37 +87,37 @@ extension LinnerLayout {
                 if item.offset != .zero && item.margin != .zero {
                     fatalError("UIView.offset和UIView.margin二者只能设置一个")
                 } else if item.offset != .zero && item.padding == .zero {
-                    startX +=  item.width - item.padding.left - item.padding.right  + self.space
+                    startX +=  item.frame.width  + self.space
                 } else {
-                    startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
+                    startX +=  item.frame.width  + self.space - item.margin.left + item.margin.right
                 }
             case .vertical:
                 if item.offset != .zero && item.margin != .zero {
                     fatalError("UIView.offset和UIView.margin二者只能设置一个")
                 } else if item.offset != .zero && item.padding == .zero {
-                    startY += item.height - item.padding.top - item.padding.bottom + self.space
+                    startY += item.frame.height + self.space
                 } else {
-                    startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
+                    startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
                 }
             }
         }
         
         switch self.axie {
         case .horizontal:
-            let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+            let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
             var height: CGFloat = 0.0
             for item in svs {
-                if item.maxY + self.padding.bottom > height {
-                    height = item.maxY + self.padding.bottom
+                if item.frame.maxY + self.padding.bottom > height {
+                    height = item.frame.maxY + self.padding.bottom
                 }
             }
             self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
         case .vertical:
-            let height: CGFloat = (svs.last?.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+            let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
             var width: CGFloat = 0.0
             for item in svs {
-                if item.maxX + item.margin.right + self.padding.right > width {
-                    width = item.maxX + item.margin.right + self.padding.right
+                if item.frame.maxX + item.margin.right + self.padding.right > width {
+                    width = item.frame.maxX + item.margin.right + self.padding.right
                 }
             }
             self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
@@ -144,36 +144,36 @@ extension LinnerLayout {
                 if item.offset != .zero && item.margin != .zero {
                     fatalError("UIView.offset和UIView.margin二者只能设置一个")
                 } else if item.offset != .zero && item.padding == .zero {
-                    startX +=  item.width - item.padding.left - item.padding.right  + self.space
+                    startX +=  item.frame.width  + self.space
                 } else {
-                    startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
+                    startX +=  item.frame.width + self.space - item.margin.left + item.margin.right
                 }
             case .vertical:
                 if item.offset != .zero && item.margin != .zero {
                     fatalError("UIView.offset和UIView.margin二者只能设置一个")
                 } else if item.offset != .zero && item.padding == .zero {
-                    startY += item.height - item.padding.top - item.padding.bottom + self.space
+                    startY += item.frame.height + self.space
                 } else {
-                    startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
+                    startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
                 }
             }
         }
         
         switch self.axie {
         case .horizontal:
-            let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+            let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
             var height: CGFloat = 0.0
             for item in svs {
-                if item.maxY + self.padding.bottom > height {
-                    height = item.maxY + self.padding.bottom
+                if item.frame.maxY + self.padding.bottom > height {
+                    height = item.frame.maxY + self.padding.bottom
                 }
             }
             self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
         case .vertical:
             var width: CGFloat = 0.0
             for item in svs {
-                if item.maxX + item.margin.right + self.padding.right > width {
-                    width = item.maxX + item.margin.right + self.padding.right
+                if item.frame.maxX + item.margin.right + self.padding.right > width {
+                    width = item.frame.maxX + item.margin.right + self.padding.right
                 }
             }
             self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
@@ -200,10 +200,7 @@ extension LinnerLayout {
                 fatalError("布局计算错误")
             }
             if item.adaptive == true {
-                print(item.size(with: .margin).width, self.width - self.padding.right)
-                if item.size(with: .margin).width > self.width - self.padding.right {
-                    
-                }
+                
             }
         }
     }

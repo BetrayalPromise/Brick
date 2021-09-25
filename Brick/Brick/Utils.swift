@@ -75,38 +75,6 @@ extension UIView {
     }
 }
 
-extension UIView {
-    var minX: CGFloat {
-        return self.frame.minX
-    }
-    
-    var maxX: CGFloat {
-        set {
-            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: self.frame.width + newValue - self.frame.maxX, height: self.frame.size.height))
-        } get {
-            return self.frame.minX + self.frame.width
-        }
-    }
-    
-    var minY: CGFloat {
-        return self.frame.minY
-    }
-    
-    var maxY: CGFloat {
-        return self.frame.minY + self.frame.height
-    }
-    
-    /// 计算padding
-    var width: CGFloat {
-        return self.frame.width + self.padding.left + self.padding.right
-    }
-    
-    /// 计算padding
-    var height: CGFloat {
-        return self.frame.height + self.padding.top + self.padding.bottom
-    }
-}
-
 public extension UIView {    
     enum BoxType {
         /// 计算padding范围大小
