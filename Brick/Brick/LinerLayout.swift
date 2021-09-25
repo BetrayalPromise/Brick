@@ -10,15 +10,17 @@ public enum MainAxie {
     case vertical
 }
 
-public struct Overload: OptionSet {
+/// 包裹类型
+public struct Wrapper: OptionSet {
     public let rawValue: UInt8
 
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
     }
-    static let wrapped = Overload(rawValue: 1 << 0)
-    static let autoWidth = Overload(rawValue: 1 << 1)
-    static let autoHeight = Overload(rawValue: 1 << 2)
+    static let none = Wrapper(rawValue: 0)
+    static let autoSize = Wrapper(rawValue: 1 << 0)
+    static let autoWidth = Wrapper(rawValue: 1 << 1)
+    static let autoHeight = Wrapper(rawValue: 1 << 2)
 }
 
 public enum Orientation {
@@ -35,7 +37,7 @@ open class LinnerLayout: BaseLayout {
     public var space: CGFloat = 0
     private var handles: [UIView] = []
     
-    public var overload: Overload = .wrapped
+    public var wrapper: Wrapper = .autoSize
     
     public convenience init(axie: MainAxie) {
         self.init()
@@ -55,8 +57,8 @@ open class LinnerLayout: BaseLayout {
             return
         }
     
-        switch self.overload {
-        case .wrapped: self.wrapped()
+        switch self.wrapper {
+        case .autoSize: self.autoSize()
         case .autoWidth: self.autoWidth()
         case .autoHeight: self.autoHeight()
         default: break
@@ -65,7 +67,7 @@ open class LinnerLayout: BaseLayout {
 }
 
 extension LinnerLayout {
-    func wrapped() {
+    func autoSize() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles

@@ -15,7 +15,7 @@ class Test0ViewController: UIViewController {
         v.scope = .safeArea
         
         let l = LinnerLayout(axie: .horizontal)
-        l.overload = .autoHeight
+        l.wrapper = .autoHeight
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
         l.frame = CGRect(x: 0, y: 0, width: 150, height: 70)
@@ -27,9 +27,22 @@ class Test0ViewController: UIViewController {
             label.numberOfLines = 0
             label.adaptive = true
             label.backgroundColor = .yellow
+            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.text =  ",lklklk大开发fgfhhgf\(i)"
             l.addSubview(label)
+            
+            print(label.origin(with: .padding))
+            print(label.origin(with: .bounds))
+            print(label.origin(with: .margin))
+            
+            print(label.size(with: .padding))
+            print(label.size(with: .bounds))
+            print(label.size(with: .margin))
+            
+            print(label.frame(with: .padding))
+            print(label.frame(with: .bounds))
+            print(label.frame(with: .margin))
         }
     }
 }

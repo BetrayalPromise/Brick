@@ -108,7 +108,7 @@ extension UIView {
 }
 
 public extension UIView {    
-    enum SizeType {
+    enum BoxType {
         /// 计算padding范围大小
         case padding
         /// 计算bounds范围大小,计算包含padding
@@ -117,7 +117,7 @@ public extension UIView {
         case margin
     }
     
-    func size(with: SizeType) -> CGSize {
+    func size(with: BoxType) -> CGSize {
         switch with {
         case .padding: return CGSize(width: self.frame.width - self.padding.left - self.padding.right, height: self.frame.height - self.padding.top - self.padding.bottom)
         case .bounds: return CGSize(width: self.frame.width + self.padding.left + self.padding.right, height: self.frame.height + self.padding.top + self.padding.bottom)
@@ -125,26 +125,30 @@ public extension UIView {
         }
     }
     
-    enum OriginType {
-        /// 计算padding范围大小
-        case padding
-        /// 计算bounds范围大小
-        case bounds
-        /// 计算margin范围大小,计算包含padding和margin
-        case margin
-    }
-    
-    func origin(with: OriginType) -> CGPoint {
+    func origin(with: BoxType) -> CGPoint {
         switch with {
         case .padding: return CGPoint(x: self.frame.origin.x + self.padding.left, y: self.frame.origin.y + self.padding.top)
         case .bounds: return self.frame.origin
         case .margin: return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
         }
     }
+    
+    func frame(with: BoxType) -> CGRect {
+        switch with {
+        case .padding: return CGRect(origin: self.origin(with: .padding), size: self.size(with: .padding))
+        case .bounds: return CGRect(origin: self.origin(with: .bounds), size: self.size(with: .bounds))
+        case .margin: return CGRect(origin: self.origin(with: .margin), size: self.size(with: .margin))
+        }
+    }
 }
 
 /// 为了解决UILabel的padding问题
 public class LayoutLabel: UILabel {
+    /// 只支持autoSize一种
+    public var wrapper: Wrapper = .autoSize {
+        didSet { self.sizeToFit() }
+    }
+    
     public override var text: String? {
         didSet { self.sizeToFit() }
     }
@@ -155,6 +159,11 @@ public class LayoutLabel: UILabel {
     
     public override var attributedText: NSAttributedString? {
         didSet { self.sizeToFit() }
+    }
+    
+    public override var frame: CGRect {
+        set { super.frame = CGRect(origin: newValue.origin, size: self.sizeThatFits(CGSize(width: 0.0, height: 0.0))) }
+        get { return super.frame }
     }
     
     public override func drawText(in rect: CGRect) {
