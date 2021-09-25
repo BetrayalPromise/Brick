@@ -15,18 +15,19 @@ class Test0ViewController: UIViewController {
         v.scope = .safeArea
         
         let l = LinnerLayout(axie: .horizontal)
-        l.overload = .compress
+        l.overload = .autoHeight
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
-        l.frame = CGRect(x: 0, y: 0, width: 150, height: 40)
+        l.frame = CGRect(x: 0, y: 0, width: 150, height: 70)
         l.backgroundColor = .blue
         v.addSubview(l)
         
-        for i in 0...3 {
-            let label = UILabel(title: "大开发\(i)")
+        for i in 0...0 {
+            let label = PaddingLabel(title: ",lklklk大开发fgfhhgf\(i)")
             label.numberOfLines = 0
+            label.adaptive = true
             label.backgroundColor = .yellow
-            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             l.addSubview(label)
         }
     }

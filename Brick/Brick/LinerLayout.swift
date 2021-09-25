@@ -10,13 +10,15 @@ public enum MainAxie {
     case vertical
 }
 
-public enum OverloadStrategy {
-    /// 包裹
-    case wrapItems
-    /// 前切超出部分
-    case cutItems
-    
-    case compress
+public struct Overload: OptionSet {
+    public let rawValue: UInt8
+
+    public init(rawValue: UInt8) {
+        self.rawValue = rawValue
+    }
+    static let wrapped = Overload(rawValue: 1 << 0)
+    static let autoWidth = Overload(rawValue: 1 << 1)
+    static let autoHeight = Overload(rawValue: 1 << 2)
 }
 
 public enum Orientation {
@@ -33,7 +35,7 @@ open class LinnerLayout: BaseLayout {
     public var space: CGFloat = 0
     private var handles: [UIView] = []
     
-    public var overload: OverloadStrategy = .wrapItems
+    public var overload: Overload = .wrapped
     
     public convenience init(axie: MainAxie) {
         self.init()
@@ -53,27 +55,23 @@ open class LinnerLayout: BaseLayout {
             return
         }
     
-        switch self.axie {
-        case .horizontal: self.horizontal()
-        case .vertical: self.vertical()
-        }
-    }
-    
-    func horizontal() {
         switch self.overload {
-        case .wrapItems: self.hWrapper()
-        case .cutItems: self.clipsToBounds = true
-        case .compress: self.hCompress()
+        case .wrapped: self.wrapped()
+        case .autoWidth: self.autoWidth()
+        case .autoHeight: self.autoHeight()
+        default: break
         }
     }
-    
-    func vertical() {
+}
+
+extension LinnerLayout {
+    func wrapped() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
         case .reverse: svs = self.handles.reversed()
         }
-        let startX: CGFloat = self.padding.left
+        var startX: CGFloat = self.padding.left
         var startY: CGFloat = self.padding.top
         for item in svs {
             item.frame = CGRect.zero
@@ -82,34 +80,56 @@ open class LinnerLayout: BaseLayout {
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
             item.frame = CGRect(origin: origin, size: item.size)
             
-            if item.offset != .zero && item.margin != .zero {
-                fatalError("UIView.offset和UIView.margin二者只能设置一个")
-            } else if item.offset != .zero && item.padding == .zero {
-                startY += item.height - item.padding.top - item.padding.bottom + self.space
-            } else {
-                startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
+            switch self.axie {
+            case .horizontal:
+                if item.offset != .zero && item.margin != .zero {
+                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                } else if item.offset != .zero && item.padding == .zero {
+                    startX +=  item.width - item.padding.left - item.padding.right  + self.space
+                } else {
+                    startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
+                }
+            case .vertical:
+                if item.offset != .zero && item.margin != .zero {
+                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                } else if item.offset != .zero && item.padding == .zero {
+                    startY += item.height - item.padding.top - item.padding.bottom + self.space
+                } else {
+                    startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
+                }
             }
         }
-        let height: CGFloat = (svs.last?.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
-        var width: CGFloat = 0.0
-        for item in svs {
-            if item.maxX + item.margin.right + self.padding.right > width {
-                width = item.maxX + item.margin.right + self.padding.right
+        
+        switch self.axie {
+        case .horizontal:
+            let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+            var height: CGFloat = 0.0
+            for item in svs {
+                if item.maxY + self.padding.bottom > height {
+                    height = item.maxY + self.padding.bottom
+                }
             }
+            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+        case .vertical:
+            let height: CGFloat = (svs.last?.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+            var width: CGFloat = 0.0
+            for item in svs {
+                if item.maxX + item.margin.right + self.padding.right > width {
+                    width = item.maxX + item.margin.right + self.padding.right
+                }
+            }
+            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
         }
-        self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
     }
-}
-
-extension LinnerLayout {
-    func hWrapper() {
+    
+    func autoWidth() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
         case .reverse: svs = self.handles.reversed()
         }
         var startX: CGFloat = self.padding.left
-        let startY: CGFloat = self.padding.top
+        var startY: CGFloat = self.padding.top
         for item in svs {
             item.frame = CGRect.zero
             item.sizeToFit()
@@ -117,35 +137,72 @@ extension LinnerLayout {
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
             item.frame = CGRect(origin: origin, size: item.size)
             
-            if item.offset != .zero && item.margin != .zero {
-                fatalError("UIView.offset和UIView.margin二者只能设置一个")
-            } else if item.offset != .zero && item.padding == .zero {
-                startX +=  item.width - item.padding.left - item.padding.right  + self.space
-            } else {
-                startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
+            switch self.axie {
+            case .horizontal:
+                if item.offset != .zero && item.margin != .zero {
+                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                } else if item.offset != .zero && item.padding == .zero {
+                    startX +=  item.width - item.padding.left - item.padding.right  + self.space
+                } else {
+                    startX +=  item.width - item.padding.left - item.padding.right  + self.space - item.margin.left + item.margin.right
+                }
+            case .vertical:
+                if item.offset != .zero && item.margin != .zero {
+                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                } else if item.offset != .zero && item.padding == .zero {
+                    startY += item.height - item.padding.top - item.padding.bottom + self.space
+                } else {
+                    startY += item.height - item.padding.top - item.padding.bottom + self.space - item.margin.top + item.margin.bottom
+                }
             }
         }
-        let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
-        var height: CGFloat = 0.0
-        for item in svs {
-            if item.maxY + self.padding.bottom > height {
-                height = item.maxY + self.padding.bottom
+        
+        switch self.axie {
+        case .horizontal:
+            let width: CGFloat = (svs.last?.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+            var height: CGFloat = 0.0
+            for item in svs {
+                if item.maxY + self.padding.bottom > height {
+                    height = item.maxY + self.padding.bottom
+                }
             }
+            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
+        case .vertical:
+            var width: CGFloat = 0.0
+            for item in svs {
+                if item.maxX + item.margin.right + self.padding.right > width {
+                    width = item.maxX + item.margin.right + self.padding.right
+                }
+            }
+            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
         }
-        self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
     }
     
-    func hCompress() {
+    func autoHeight() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
         case .reverse: svs = self.handles.reversed()
         }
-       
+        var startX: CGFloat = self.padding.left
+        var startY: CGFloat = self.padding.top
+        
         for item in svs {
+            if item is UILabel {
+                /// 解决中英文混排换行问题
+                (item as? UILabel)?.lineBreakMode = .byCharWrapping
+            }
             item.frame = CGRect.zero
             item.sizeToFit()
-            print(item.frame)
+            if item.adaptive == false && item.size.width > self.frame.width - self.padding.left - self.padding.right {
+                fatalError("布局计算错误")
+//                item.frame = self.handle?.relayout(subview: item, superview: self) ?? .zero
+            }
+            if item.adaptive == true {
+                if  item.size.width > self.width - self.padding.right {
+                    
+                }
+            }
         }
     }
 }

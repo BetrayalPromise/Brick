@@ -29,6 +29,16 @@ extension UIView {
         static var padding = "UIViewAssociatedObjectKeyPadding"
         static var margin = "UIViewAssociatedObjectKeyMargin"
         static var offset = "UIViewAssociatedObjectKeyOffset"
+        static var adaptive = "UIViewAssociatedObjectKeyAdaptive"
+    }
+    
+    /// 自动适应
+    public var adaptive: Bool {
+        set {
+            objc_setAssociatedObject(self, &AssociatedKey.adaptive, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        } get {
+            return objc_getAssociatedObject(self, &AssociatedKey.adaptive) as? Bool ?? false
+        }
     }
     
     /// 视图坚硬程度类比自动布局抗压抗拉属性
@@ -80,7 +90,11 @@ extension UIView {
     }
     
     var maxX: CGFloat {
-        return self.frame.minX + self.frame.width
+        set {
+            self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: self.frame.width + newValue - self.frame.maxX, height: self.frame.size.height))
+        } get {
+            return self.frame.minX + self.frame.width
+        }
     }
     
     var minY: CGFloat {
@@ -91,27 +105,74 @@ extension UIView {
         return self.frame.minY + self.frame.height
     }
     
+    /// 计算padding
     var width: CGFloat {
         return self.frame.width + self.padding.left + self.padding.right
     }
     
+    /// 计算padding
     var height: CGFloat {
         return self.frame.height + self.padding.top + self.padding.bottom
     }
 }
 
 public extension UIView {
+    /// 计算margin
     var origin: CGPoint {
         return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
     }
     
+    /// 计算padding
     var size: CGSize {
         return CGSize(width: self.width, height: self.height)
+    }
+    
+    enum SizeType {
+        /// 计算padding范围大小
+        case padding
+        /// 计算bounds范围大小,计算包含padding
+        case bounds
+        /// 计算margin范围大小,计算包含padding和margin
+        case margin
+    }
+    
+    func size(with: SizeType) -> CGSize {
+        switch with {
+        case .padding: return CGSize(width: self.frame.width - self.padding.left - self.padding.right, height: self.frame.height - self.padding.top - self.padding.bottom)
+        case .bounds: return CGSize(width: self.frame.width + self.padding.left + self.padding.right, height: self.frame.height + self.padding.top + self.padding.bottom)
+        case .margin: return CGSize(width: self.frame.width + self.margin.left + self.margin.right + self.padding.left + self.padding.right, height: self.frame.height + self.margin.top + self.margin.bottom + self.padding.top + self.padding.bottom)
+        }
+    }
+    
+    enum OriginType {
+        /// 计算padding范围大小
+        case padding
+        /// 计算bounds范围大小
+        case bounds
+        /// 计算margin范围大小,计算包含padding和margin
+        case margin
+    }
+    
+    func origin(with: OriginType) -> CGPoint {
+        switch with {
+        case .padding: return CGPoint(x: self.frame.origin.x + self.padding.left, y: self.frame.origin.y + self.padding.top)
+        case .bounds: return self.frame.origin
+        case .margin: return CGPoint(x: self.frame.origin.x - self.margin.left, y: self.frame.origin.y - self.margin.top)
+        }
     }
 }
 
 /// 为了解决UILabel的padding问题
 public class PaddingLabel: UILabel {
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.lineBreakMode = .byCharWrapping
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: self.padding))
     }
