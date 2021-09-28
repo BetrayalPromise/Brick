@@ -45,8 +45,8 @@ extension UIView {
     /// 若视图为LayoutLabel及其之类的话该属性设置必须先于(UILabel.text,UILabel.attributedTex,UILabel.font)t进行设置,否则设置不生效
     public var padding: UIEdgeInsets {
         set {
-            if (self is UILabel) && !(self is LayoutLabel) {
-                print("Label设置padding需要使用PaddingLabel子类")
+            if (self is UILabel) {
+                print("暂未实现UILabel.padding")
             }
             objc_setAssociatedObject(self, &AssociatedKey.padding, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         } get {

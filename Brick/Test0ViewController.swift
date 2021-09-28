@@ -22,8 +22,8 @@ class Test0ViewController: UIViewController {
         l.backgroundColor = .blue
         v.addSubview(l)
         
-        for i in 0...0 {
-            let label = LayoutLabel()
+        for i in 0...1 {
+            let label = UILabel()
             label.numberOfLines = 0
             label.adaptive = true
             label.backgroundColor = .yellow
@@ -31,18 +31,6 @@ class Test0ViewController: UIViewController {
             label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.text =  ",lklklk大开发fgfhhgf\(i)"
             l.addSubview(label)
-            
-            print(label.getOrigin(with: .padding))
-            print(label.getOrigin(with: .bounds))
-            print(label.getOrigin(with: .margin))
-            
-            print(label.getSize(with: .padding))
-            print(label.getSize(with: .bounds))
-            print(label.getSize(with: .margin))
-            
-            print(label.getFrame(with: .padding))
-            print(label.getFrame(with: .bounds))
-            print(label.getFrame(with: .margin))
         }
     }
 }

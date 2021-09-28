@@ -5,7 +5,7 @@ class Test1ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        let label = LayoutLabel()
+        let label = UILabel()
         label.backgroundColor = .yellow
         label.padding = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         view.addSubview(label)

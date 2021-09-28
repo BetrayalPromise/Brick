@@ -44,6 +44,10 @@ open class LinnerLayout: BaseLayout {
         self.axie = axie
     }
     
+    deinit {
+        print(#function)
+    }
+    
     open override func addSubview(_ view: UIView) {
         super.addSubview(view)
         self.handles.append(view)
@@ -187,7 +191,10 @@ extension LinnerLayout {
         case .reverse: svs = self.handles.reversed()
         }
         var startX: CGFloat = self.padding.left
-        var startY: CGFloat = self.padding.top
+        let startY: CGFloat = self.padding.top
+        
+        var layoutScopeWidth: CGFloat = self.frame.width - self.padding.left - self.padding.right
+        var totalSubviewsWidth: CGFloat = 0.0
         
         for item in svs {
             if item is UILabel {
@@ -196,12 +203,55 @@ extension LinnerLayout {
             }
             item.frame = CGRect.zero
             item.sizeToFit()
-            if item.adaptive == false && item.getSize(with: .margin).width > self.frame.width - self.padding.left - self.padding.right {
-                fatalError("布局计算错误")
+            totalSubviewsWidth += item.getSize(with: .margin).width
+        }
+        
+        if totalSubviewsWidth < layoutScopeWidth {
+            self.autoSize()
+        } else {
+            let grouped = svs.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
+                var result: [[UIView]] = result
+                if result.count == 0 {
+                    result.append([v])
+                } else {
+                    if result.last?.last?.flintiness == v.flintiness {
+                        var last = result.last
+                        last?.append(v)
+                        result.removeLast()
+                        result.append(last ?? [UIView]())
+                    } else {
+                        result.append([v])
+                    }
+                }
+                return result
             }
-            if item.adaptive == true {
-                print(item.getSize(with: .margin))
+            print(grouped)
+        }
+
+        var index = 0
+        for item in svs {
+            if index == 0 {
+                if item.adaptive == false && item.getSize(with: .margin).width > layoutScopeWidth {
+                    fatalError("布局计算错误")
+                }
+                if item.adaptive == true {
+                    print(item.getSize(with: .margin))
+                    if item.getSize(with: .margin).width > layoutScopeWidth {
+                        let size = item.sizeThatFits(CGSize(width: self.getSize(with: .padding).width, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: CGSize(width: layoutScopeWidth, height: size.height))
+                        layoutScopeWidth -= item.getSize(with: .margin).width
+                        startX += item.getSize(with: .margin).width
+                    } else {
+                        let size = item.sizeThatFits(CGSize(width: self.getSize(with: .padding).width, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: size)
+                        layoutScopeWidth -= item.getSize(with: .margin).width
+                        startX += item.getSize(with: .margin).width
+                    }
+                }
+            } else {
+
             }
+            index += 1
         }
     }
 }

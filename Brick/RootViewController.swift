@@ -8,8 +8,7 @@
 import UIKit
 
 class RootViewController: UIViewController {
-    
-    let controllers = [Test0ViewController(), Test1ViewController()]
+    let controllers: [String] = ["Brick.Test0ViewController", "Brick.Test1ViewController"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +36,8 @@ extension RootViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        self.navigationController?.pushViewController(controllers[indexPath.row], animated: true)
+        guard let controller: UIViewController.Type = NSClassFromString(controllers[indexPath.row]) as? UIViewController.Type else { return }
+        print(controller)
+        self.navigationController?.pushViewController(controller.init(), animated: true)
     }
 }
