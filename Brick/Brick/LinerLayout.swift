@@ -235,7 +235,7 @@ extension LinnerLayout {
                     index = i; break
                 }
             }
-            if index + 1 < grouped.count - 1 {
+            if index < grouped.count - 1 {
                 for i in (index + 1)...(grouped.count - 1) {
                     for item in grouped[i] {
                         item.frame = .zero
@@ -249,7 +249,7 @@ extension LinnerLayout {
             
             if remainWidths < 0.0 {
                 print("!!!警告!!!: 布局计算异常, 布局不生效")
-//                return
+                return
             }
             
             for item in remainViews {
@@ -262,6 +262,27 @@ extension LinnerLayout {
             for item in layoutViews {
                 item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: item.size(with: .margin))
                 startX += space + item.size(with: .margin).width
+            }
+            
+            switch self.axie {
+            case .horizontal:
+                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                var height: CGFloat = 0.0
+                for item in svs {
+                    if item.frame.maxY + self.padding.bottom > height {
+                        height = item.frame.maxY + self.padding.bottom
+                    }
+                }
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+            case .vertical:
+                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+                var width: CGFloat = 0.0
+                for item in svs {
+                    if item.frame.maxX + item.margin.right + self.padding.right > width {
+                        width = item.frame.maxX + item.margin.right + self.padding.right
+                    }
+                }
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             }
         }
     }
