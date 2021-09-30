@@ -12,16 +12,16 @@ class Test1ViewController: UIViewController {
         label.text = "对方健康的减肥3u4"
         label.frame = CGRect(x: 100, y: 100, width: 100, height: 200)
     
-        print(label.getOrigin(with: .padding))
-        print(label.getOrigin(with: .bounds))
-        print(label.getOrigin(with: .margin))
+        print(label.origin(with: .padding))
+        print(label.origin(with: .bounds))
+        print(label.origin(with: .margin))
         
-        print(label.getSize(with: .padding))
-        print(label.getSize(with: .bounds))
-        print(label.getSize(with: .margin))
+        print(label.size(with: .padding))
+        print(label.size(with: .bounds))
+        print(label.size(with: .margin))
         
-        print(label.getFrame(with: .padding))
-        print(label.getFrame(with: .bounds))
-        print(label.getFrame(with: .margin))
+        print(label.frame(with: .padding))
+        print(label.frame(with: .bounds))
+        print(label.frame(with: .margin))
     }
 }

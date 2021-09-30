@@ -84,7 +84,7 @@ extension LinnerLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.getSize(with: .bounds))
+            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
             
             switch self.axie {
             case .horizontal:
@@ -141,7 +141,7 @@ extension LinnerLayout {
             item.sizeToFit()
             
             let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.getSize(with: .bounds))
+            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
             
             switch self.axie {
             case .horizontal:
@@ -190,8 +190,7 @@ extension LinnerLayout {
         case .forward: svs = self.handles
         case .reverse: svs = self.handles.reversed()
         }
-        var startX: CGFloat = self.padding.left
-        let startY: CGFloat = self.padding.top
+
         
         let layoutScopeWidth: CGFloat = self.frame.width - self.padding.left - self.padding.right
         var totalSubviewsWidth: CGFloat = 0.0
@@ -203,34 +202,76 @@ extension LinnerLayout {
             }
             item.frame = CGRect.zero
             item.sizeToFit()
-            totalSubviewsWidth += item.getSize(with: .margin).width
+            totalSubviewsWidth += item.size(with: .margin).width
         }
         
         if totalSubviewsWidth < layoutScopeWidth {
             self.size()
         } else {
-//            let grouped = svs.sorted { $0.flintiness < $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
-//                var result: [[UIView]] = result
-//                if result.count == 0 {
-//                    result.append([v])
-//                } else {
-//                    if result.last?.last?.flintiness == v.flintiness {
-//                        var last = result.last
-//                        last?.append(v)
-//                        result.removeLast()
-//                        result.append(last ?? [UIView]())
-//                    } else {
-//                        result.append([v])
-//                    }
-//                }
-//                return result
-//            }
+            let grouped = svs.sorted { $0.flintiness > $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
+                var result: [[UIView]] = result
+                if result.count == 0 {
+                    result.append([v])
+                } else {
+                    if result.last?.last?.flintiness == v.flintiness {
+                        var last = result.last
+                        last?.append(v)
+                        result.removeLast()
+                        result.append(last ?? [UIView]())
+                    } else {
+                        result.append([v])
+                    }
+                }
+                return result
+            }
             
-            let sorts: [UIView] = svs.sorted { $0.flintiness < $1.flintiness }
-            print(sorts)
+            var widths = 0.0
+            var index: Int = 0
+            for (i, items) in grouped.enumerated() {
+                let width: CGFloat = items.totalWidth()
+                widths += width
+                if widths > layoutScopeWidth {
+                    widths -= width
+                    index = i; break
+                }
+            }
+            if index + 1 < grouped.count - 1 {
+                for i in (index + 1)...(grouped.count - 1) {
+                    for item in grouped[i] {
+                        item.frame = .zero
+                    }
+                }
+            }
             
+            let remainViews: [UIView] = svs.filter { $0.flintiness == grouped[index].last?.flintiness ?? 500 }
+            let layoutViews: [UIView] = svs.filter { $0.flintiness >= grouped[index].last?.flintiness ?? 500 }
+            let remainWidths: CGFloat = (layoutScopeWidth - widths - self.space * CGFloat(layoutViews.count - 1)) / Double(grouped[index].count)
             
+            if remainWidths < 0.0 {
+                print("!!!警告!!!: 布局计算异常, 布局不生效")
+//                return
+            }
+            
+            for item in remainViews {
+                let size = item.sizeThatFits(CGSize(width: remainWidths, height: 0.0))
+                item.size(with: .margin, size: CGSize(width: remainWidths, height: size.height))
+            }
+            
+            var startX: CGFloat = self.padding.left
+            let startY: CGFloat = self.padding.top
+            for item in layoutViews {
+                item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: item.size(with: .margin))
+                startX += space + item.size(with: .margin).width
+            }
         }
     }
 }
 
+
+extension Array where Element == UIView {
+    func totalWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x + y.size(with: .margin).width
+        }
+    }
+}
