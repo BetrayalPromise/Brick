@@ -20,16 +20,6 @@ extension UIView {
         static var padding = "UIViewAssociatedObjectKeyPadding"
         static var margin = "UIViewAssociatedObjectKeyMargin"
         static var offset = "UIViewAssociatedObjectKeyOffset"
-        static var adaptive = "UIViewAssociatedObjectKeyAdaptive"
-    }
-    
-    /// 自动适应
-    public var adaptive: Bool {
-        set {
-            objc_setAssociatedObject(self, &AssociatedKey.adaptive, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        } get {
-            return objc_getAssociatedObject(self, &AssociatedKey.adaptive) as? Bool ?? false
-        }
     }
     
     /// 视图坚硬程度类比自动布局抗压抗拉属性

@@ -17,10 +17,10 @@ public struct Wrapper: OptionSet {
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
     }
-    static let none = Wrapper(rawValue: 0)
-    static let autoSize = Wrapper(rawValue: 1 << 0)
-    static let autoWidth = Wrapper(rawValue: 1 << 1)
-    static let autoHeight = Wrapper(rawValue: 1 << 2)
+    static let none = Wrapper([])
+    static let size = Wrapper(rawValue: 1 << 0)
+    static let width = Wrapper(rawValue: 1 << 1)
+    static let height = Wrapper(rawValue: 1 << 2)
 }
 
 public enum Orientation {
@@ -37,7 +37,7 @@ open class LinnerLayout: BaseLayout {
     public var space: CGFloat = 0
     private var handles: [UIView] = []
     
-    public var wrapper: Wrapper = .autoSize
+    public var wrapper: Wrapper = .size
     
     public convenience init(axie: MainAxie) {
         self.init()
@@ -62,16 +62,16 @@ open class LinnerLayout: BaseLayout {
         }
     
         switch self.wrapper {
-        case .autoSize: self.autoSize()
-        case .autoWidth: self.autoWidth()
-        case .autoHeight: self.autoHeight()
+        case .size: self.size()
+        case .width: self.width()
+        case .height: self.height()
         default: break
         }
     }
 }
 
 extension LinnerLayout {
-    func autoSize() {
+    func size() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
@@ -128,7 +128,7 @@ extension LinnerLayout {
         }
     }
     
-    func autoWidth() {
+    func width() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
@@ -184,7 +184,7 @@ extension LinnerLayout {
         }
     }
     
-    func autoHeight() {
+    func height() {
         var svs = self.handles
         switch self.orientation {
         case .forward: svs = self.handles
@@ -193,7 +193,7 @@ extension LinnerLayout {
         var startX: CGFloat = self.padding.left
         let startY: CGFloat = self.padding.top
         
-        var layoutScopeWidth: CGFloat = self.frame.width - self.padding.left - self.padding.right
+        let layoutScopeWidth: CGFloat = self.frame.width - self.padding.left - self.padding.right
         var totalSubviewsWidth: CGFloat = 0.0
         
         for item in svs {
@@ -207,51 +207,29 @@ extension LinnerLayout {
         }
         
         if totalSubviewsWidth < layoutScopeWidth {
-            self.autoSize()
+            self.size()
         } else {
-            let grouped = svs.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
-                var result: [[UIView]] = result
-                if result.count == 0 {
-                    result.append([v])
-                } else {
-                    if result.last?.last?.flintiness == v.flintiness {
-                        var last = result.last
-                        last?.append(v)
-                        result.removeLast()
-                        result.append(last ?? [UIView]())
-                    } else {
-                        result.append([v])
-                    }
-                }
-                return result
-            }
-            print(grouped)
-        }
-
-        var index = 0
-        for item in svs {
-            if index == 0 {
-                if item.adaptive == false && item.getSize(with: .margin).width > layoutScopeWidth {
-                    fatalError("布局计算错误")
-                }
-                if item.adaptive == true {
-                    print(item.getSize(with: .margin))
-                    if item.getSize(with: .margin).width > layoutScopeWidth {
-                        let size = item.sizeThatFits(CGSize(width: self.getSize(with: .padding).width, height: 0.0))
-                        item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: CGSize(width: layoutScopeWidth, height: size.height))
-                        layoutScopeWidth -= item.getSize(with: .margin).width
-                        startX += item.getSize(with: .margin).width
-                    } else {
-                        let size = item.sizeThatFits(CGSize(width: self.getSize(with: .padding).width, height: 0.0))
-                        item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: size)
-                        layoutScopeWidth -= item.getSize(with: .margin).width
-                        startX += item.getSize(with: .margin).width
-                    }
-                }
-            } else {
-
-            }
-            index += 1
+//            let grouped = svs.sorted { $0.flintiness < $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
+//                var result: [[UIView]] = result
+//                if result.count == 0 {
+//                    result.append([v])
+//                } else {
+//                    if result.last?.last?.flintiness == v.flintiness {
+//                        var last = result.last
+//                        last?.append(v)
+//                        result.removeLast()
+//                        result.append(last ?? [UIView]())
+//                    } else {
+//                        result.append([v])
+//                    }
+//                }
+//                return result
+//            }
+            
+            let sorts: [UIView] = svs.sorted { $0.flintiness < $1.flintiness }
+            print(sorts)
+            
+            
         }
     }
 }
