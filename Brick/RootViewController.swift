@@ -1,10 +1,3 @@
-//
-//  RootViewController.swift
-//  Brick
-//
-//  Created by 李阳 on 25/9/2021.
-//
-
 import UIKit
 
 class RootViewController: UIViewController {
