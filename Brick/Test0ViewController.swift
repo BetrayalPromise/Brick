@@ -14,7 +14,7 @@ class Test0ViewController: UIViewController {
         v.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         v.scope = .safeArea
         
-        let l = LinnerLayout(axie: .horizontal)
+        let l = LinnerLayout(axie: .vertical)
         l.wrapper = .height
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
@@ -26,7 +26,7 @@ class Test0ViewController: UIViewController {
             let label = UILabel()
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-//            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 //            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.text =  ",lklkldfad\(i)"
             l.addSubview(label)

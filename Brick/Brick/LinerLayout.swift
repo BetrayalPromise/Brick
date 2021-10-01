@@ -240,6 +240,26 @@ extension LinnerLayout {
                     }
                 }
             }
+            switch self.axie {
+            case .horizontal:
+                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                var height: CGFloat = 0.0
+                for item in svs {
+                    if item.frame.maxY + self.padding.bottom > height {
+                        height = item.frame.maxY + self.padding.bottom
+                    }
+                }
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+            case .vertical:
+                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+                var width: CGFloat = 0.0
+                for item in svs {
+                    if item.frame.maxX + item.margin.right + self.padding.right > width {
+                        width = item.frame.maxX + item.margin.right + self.padding.right
+                    }
+                }
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+            }
         } else {
             let grouped = svs.sorted { $0.flintiness > $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
                 var result: [[UIView]] = result
@@ -295,6 +315,7 @@ extension LinnerLayout {
             for item in layoutViews {
                 item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
                 startX += self.space + item.size(with: .margin).width
+                
             }
             
             switch self.axie {
@@ -306,7 +327,7 @@ extension LinnerLayout {
                         height = item.frame.maxY + self.padding.bottom
                     }
                 }
-                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height + self.padding.bottom))
             case .vertical:
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0
