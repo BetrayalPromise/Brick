@@ -202,11 +202,44 @@ extension LinnerLayout {
             }
             item.frame = CGRect.zero
             item.sizeToFit()
-            totalSubviewsWidth += item.size(with: .margin).width
+            totalSubviewsWidth += item.size(with: .margin).width + self.space
         }
+        totalSubviewsWidth -= self.space
         
         if totalSubviewsWidth < layoutScopeWidth {
-            self.size()
+            var svs = self.handles
+            switch self.orientation {
+            case .forward: svs = self.handles
+            case .reverse: svs = self.handles.reversed()
+            }
+            var startX: CGFloat = self.padding.left
+            var startY: CGFloat = self.padding.top
+            for item in svs {
+                item.frame = CGRect.zero
+                item.sizeToFit()
+                
+                let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
+                item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+                
+                switch self.axie {
+                case .horizontal:
+                    if item.offset != .zero && item.margin != .zero {
+                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                    } else if item.offset != .zero && item.padding == .zero {
+                        startX +=  item.frame.width  + self.space
+                    } else {
+                        startX +=  item.frame.width  + self.space - item.margin.left + item.margin.right
+                    }
+                case .vertical:
+                    if item.offset != .zero && item.margin != .zero {
+                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
+                    } else if item.offset != .zero && item.padding == .zero {
+                        startY += item.frame.height + self.space
+                    } else {
+                        startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
+                    }
+                }
+            }
         } else {
             let grouped = svs.sorted { $0.flintiness > $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
                 var result: [[UIView]] = result
@@ -254,14 +287,14 @@ extension LinnerLayout {
             
             for item in remainViews {
                 let size = item.sizeThatFits(CGSize(width: remainWidths, height: 0.0))
-                item.size(with: .margin, size: CGSize(width: remainWidths, height: size.height))
+                item.frame = CGRect(origin: item.frame.origin, size: CGSize(width: remainWidths, height: size.height))
             }
             
             var startX: CGFloat = self.padding.left
             let startY: CGFloat = self.padding.top
             for item in layoutViews {
-                item.frame = CGRect(origin: CGPoint(x: startX, y: startY), size: item.size(with: .margin))
-                startX += space + item.size(with: .margin).width
+                item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
+                startX += self.space + item.size(with: .margin).width
             }
             
             switch self.axie {

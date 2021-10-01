@@ -83,14 +83,6 @@ public extension UIView {
         }
     }
     
-    func size(with: BoxType, size: CGSize) {
-        switch with {
-        case .padding: self.frame.size = CGSize(width: size.width + self.padding.left + self.padding.right, height: size.height + self.padding.top + self.padding.bottom)
-        case .bounds: self.frame.size = size
-        case .margin: self.frame.size = CGSize(width: size.width - self.margin.left - self.margin.right, height: size.height - self.margin.top - self.margin.bottom)
-        }
-    }
-    
     func origin(with: BoxType) -> CGPoint {
         switch with {
         case .padding: return CGPoint(x: self.frame.origin.x + self.padding.left, y: self.frame.origin.y + self.padding.top)
@@ -99,25 +91,11 @@ public extension UIView {
         }
     }
     
-    func origin(with: BoxType, origin: CGPoint) {
-        switch with {
-        case .padding, .bounds, .margin: self.frame.origin = origin
-        }
-    }
-    
     func frame(with: BoxType) -> CGRect {
         switch with {
         case .padding: return CGRect(origin: self.origin(with: .padding), size: self.size(with: .padding))
         case .bounds: return CGRect(origin: self.origin(with: .bounds), size: self.size(with: .bounds))
         case .margin: return CGRect(origin: self.origin(with: .margin), size: self.size(with: .margin))
-        }
-    }
-    
-    func frame(with: BoxType, rect: CGRect) {
-        switch with {
-        case .padding: self.frame = CGRect(x: rect.origin.x - self.padding.left, y: rect.origin.y - self.padding.top, width: rect.width + self.padding.left + self.padding.right, height: rect.height + self.padding.top + self.padding.bottom)
-        case .bounds: self.frame = rect
-        case .margin: self.frame = CGRect(x: rect.origin.x + self.margin.left, y: rect.origin.y + rect.origin.y , width: self.frame.width - self.margin.left - self.margin.right, height: self.frame.height - self.margin.top - self.margin.bottom)
         }
     }
 }

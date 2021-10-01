@@ -14,7 +14,7 @@ class Test0ViewController: UIViewController {
         v.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         v.scope = .safeArea
         
-        let l = LinnerLayout(axie: .vertical)
+        let l = LinnerLayout(axie: .horizontal)
         l.wrapper = .height
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
