@@ -16,18 +16,30 @@ extension UIView {
 
 extension UIView {
     private struct AssociatedKey {
-        static var flintiness = "UIViewAssociatedObjectKeyFlintiness"
+        static var compressible = "UIViewAssociatedObjectKeyCompressible"
+        static var stretchable = "UIViewAssociatedObjectKeyStretchable"
         static var padding = "UIViewAssociatedObjectKeyPadding"
         static var margin = "UIViewAssociatedObjectKeyMargin"
         static var offset = "UIViewAssociatedObjectKeyOffset"
     }
     
     /// 视图坚硬程度类比自动布局抗压抗拉属性
-    public var flintiness: CGFloat {
+    /// 压缩优先级 数值越大越难以压缩 数值越小越容易压缩
+    public var compressible: CGFloat {
         set {
-            objc_setAssociatedObject(self, &AssociatedKey.flintiness, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKey.compressible, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         } get {
-            return objc_getAssociatedObject(self, &AssociatedKey.flintiness) as? CGFloat ?? 500
+            return objc_getAssociatedObject(self, &AssociatedKey.compressible) as? CGFloat ?? 500
+        }
+    }
+    
+    /// 视图坚硬程度类比自动布局抗压拉伸属性
+    /// 压缩优先级 数值越大越难以拉伸 数值越小越容易拉伸
+    public var stretchable: CGFloat {
+        set {
+            objc_setAssociatedObject(self, &AssociatedKey.stretchable, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        } get {
+            return objc_getAssociatedObject(self, &AssociatedKey.stretchable) as? CGFloat ?? 500
         }
     }
     
@@ -100,9 +112,3 @@ public extension UIView {
     }
 }
 
-
-extension CGPoint {
-    static func + (left: CGPoint, right: CGPoint) -> CGPoint {
-        return CGPoint(x: left.x + right.x, y: left.y + right.y)
-    }
-}

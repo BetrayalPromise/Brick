@@ -261,12 +261,12 @@ extension LinnerLayout {
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             }
         } else {
-            let grouped = svs.sorted { $0.flintiness > $1.flintiness }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
+            let grouped = svs.sorted { $0.compressible > $1.compressible }.reduce([[UIView]]()) { (result, v) -> [[UIView]] in
                 var result: [[UIView]] = result
                 if result.count == 0 {
                     result.append([v])
                 } else {
-                    if result.last?.last?.flintiness == v.flintiness {
+                    if result.last?.last?.compressible == v.compressible {
                         var last = result.last
                         last?.append(v)
                         result.removeLast()
@@ -296,8 +296,8 @@ extension LinnerLayout {
                 }
             }
             
-            let remainViews: [UIView] = svs.filter { $0.flintiness == grouped[index].last?.flintiness ?? 500 }
-            let layoutViews: [UIView] = svs.filter { $0.flintiness >= grouped[index].last?.flintiness ?? 500 }
+            let remainViews: [UIView] = svs.filter { $0.compressible == grouped[index].last?.compressible ?? 500 }
+            let layoutViews: [UIView] = svs.filter { $0.compressible >= grouped[index].last?.compressible ?? 500 }
             let remainWidths: CGFloat = (layoutScopeWidth - widths - self.space * CGFloat(layoutViews.count - 1)) / Double(grouped[index].count)
             
             if remainWidths < 0.0 {
@@ -305,21 +305,19 @@ extension LinnerLayout {
                 return
             }
             
-            for item in remainViews {
-                let size = item.sizeThatFits(CGSize(width: remainWidths, height: 0.0))
-                item.frame = CGRect(origin: item.frame.origin, size: CGSize(width: remainWidths, height: size.height))
-            }
-            
-            var startX: CGFloat = self.padding.left
-            let startY: CGFloat = self.padding.top
-            for item in layoutViews {
-                item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
-                startX += self.space + item.size(with: .margin).width
-                
-            }
-            
             switch self.axie {
             case .horizontal:
+                for item in remainViews {
+                    let size = item.sizeThatFits(CGSize(width: remainWidths, height: 0.0))
+                    item.frame = CGRect(origin: item.frame.origin, size: CGSize(width: remainWidths, height: size.height))
+                }
+                
+                var startX: CGFloat = self.padding.left
+                let startY: CGFloat = self.padding.top
+                for item in layoutViews {
+                    item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
+                    startX += self.space + item.size(with: .margin).width
+                }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
@@ -329,6 +327,19 @@ extension LinnerLayout {
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height + self.padding.bottom))
             case .vertical:
+                let startX: CGFloat = self.padding.left
+                var startY: CGFloat = self.padding.top
+                for item in svs {
+                    if item.frame.size.width > self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right {
+                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: size.height))
+                        startY += self.space + size.height + item.margin.bottom
+                    } else {
+                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left, y: startY + item.margin.top), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: size.height))
+                        startY += self.space + size.height + item.margin.bottom
+                    }
+                }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0
                 for item in svs {

@@ -28,10 +28,10 @@ class Test0ViewController: UIViewController {
             label.backgroundColor = .yellow
             label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 //            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-            label.text =  ",lklkldfad\(i)"
+            label.text =  ",lklkldfafadfadfadfadfad\(i)"
             l.addSubview(label)
             if i == 1 {
-                label.flintiness = 400
+                label.compressible = 400
             }
         }
     }
