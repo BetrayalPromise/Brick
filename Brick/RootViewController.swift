@@ -1,7 +1,7 @@
 import UIKit
 
 class RootViewController: UIViewController {
-    let controllers: [String] = ["Brick.Test0ViewController", "Brick.Test1ViewController"]
+    let controllers: [String] = ["Brick.Liner0ViewController", "Brick.Test1ViewController"]
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -1,6 +1,6 @@
 import UIKit
 
-class Test0ViewController: UIViewController {
+class Liner0ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,11 +26,13 @@ class Test0ViewController: UIViewController {
             let label = UILabel()
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.text =  ",lklkldfafadfadfadfadfad\(i)"
+            label.font = UIFont.systemFont(ofSize: 32)
             l.addSubview(label)
             if i == 1 {
+                label.offset = CGPoint(x: 10, y: 10)
                 label.compressible = 400
             }
         }
