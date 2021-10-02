@@ -71,6 +71,7 @@ open class LinnerLayout: BaseLayout {
 }
 
 extension LinnerLayout {
+    /// 自动尺寸
     func size() {
         var svs = self.handles
         switch self.orientation {
@@ -92,12 +93,7 @@ extension LinnerLayout {
                     startX +=  item.frame.width + self.space
                 }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
-                var height: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxY + self.padding.bottom > height {
-                        height = item.frame.maxY + self.padding.bottom
-                    }
-                }
+                let height: CGFloat = svs.maxHeight() + self.padding.top + self.padding.bottom
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             case .vertical:
                 if item.effect {
@@ -106,17 +102,13 @@ extension LinnerLayout {
                     startY += item.frame.height + self.space
                 }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
-                var width: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxX + self.padding.right > width {
-                        width = item.frame.maxX + self.padding.right
-                    }
-                }
+                let width: CGFloat = svs.maxWidth() + self.padding.left + self.padding.right
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             }
         }
     }
     
+    /// 自动宽度
     func width() {
         var svs = self.handles
         switch self.orientation {
@@ -140,12 +132,6 @@ extension LinnerLayout {
                     startX +=  item.frame.width + self.space
                 }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
-                var height: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxY + self.padding.bottom > height {
-                        height = item.frame.maxY + self.padding.bottom
-                    }
-                }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
             case .vertical:
                 if item.effect {
@@ -153,17 +139,13 @@ extension LinnerLayout {
                 } else {
                     startY += item.frame.height + self.space
                 }
-                var width: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxX + self.padding.right > width {
-                        width = item.frame.maxX + self.padding.right
-                    }
-                }
+                let width: CGFloat = svs.maxWidth() + self.padding.right
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
             }
         }
     }
     
+    /// 自动高度
     func height() {
         var svs = self.handles
         switch self.orientation {
@@ -208,12 +190,7 @@ extension LinnerLayout {
                         startX +=  item.frame.width  + self.space
                     }
                     let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
-                    var height: CGFloat = 0.0
-                    for item in svs {
-                        if item.frame.maxY + self.padding.bottom > height {
-                            height = item.frame.maxY + self.padding.bottom
-                        }
-                    }
+                    let height: CGFloat = svs.maxHeight() + self.padding.bottom
                     self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
                 case .vertical:
                     if item.effect {
@@ -221,14 +198,8 @@ extension LinnerLayout {
                     } else {
                         startY += item.frame.height + self.space
                     }
-                    
                     let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
-                    var width: CGFloat = 0.0
-                    for item in svs {
-                        if item.frame.maxX + self.padding.right > width {
-                            width = item.frame.maxX + self.padding.right
-                        }
-                    }
+                    let width: CGFloat = svs.maxWidth() + self.padding.right
                     self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
                 }
             }
@@ -295,12 +266,7 @@ extension LinnerLayout {
                     }
                 }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
-                var height: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxY + self.padding.bottom > height {
-                        height = item.frame.maxY + self.padding.bottom
-                    }
-                }
+                let height: CGFloat = svs.maxHeight() + self.padding.bottom
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height + self.padding.bottom))
             case .vertical:
                 let startX: CGFloat = self.padding.left
@@ -320,12 +286,7 @@ extension LinnerLayout {
                     }
                 }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
-                var width: CGFloat = 0.0
-                for item in svs {
-                    if item.frame.maxX + self.padding.right > width {
-                        width = item.frame.maxX + self.padding.right
-                    }
-                }
+                let width: CGFloat = svs.maxWidth() + self.padding.right
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             }
         }
@@ -337,6 +298,24 @@ extension Array where Element == UIView {
     func totalWidth() -> CGFloat {
         return self.reduce(0.0) { x, y in
             return x + y.frame.size.width
+        }
+    }
+    
+    func totalHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x + y.frame.size.height
+        }
+    }
+    
+    func maxWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x > y.frame.width ? x : y.frame.width
+        }
+    }
+    
+    func maxHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x > y.frame.height ? x : y.frame.height
         }
     }
 }

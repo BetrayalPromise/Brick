@@ -1,12 +1,19 @@
+//
+//  Liner3ViewController.swift
+//  Brick
+//
+//  Created by 李阳 on 2/10/2021.
+//
+
 import UIKit
 
-class Liner0ViewController: UIViewController {
-    
+class Liner3ViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "horizontal.size"
+        self.title = "vertical.size"
     
         let v = ScopeLayout()
         v.backgroundColor = .red
@@ -15,7 +22,7 @@ class Liner0ViewController: UIViewController {
         v.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         v.scope = .safeArea
         
-        let l = LinnerLayout(axie: .horizontal)
+        let l = LinnerLayout(axie: .vertical)
         l.wrapper = .size
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
@@ -35,4 +42,5 @@ class Liner0ViewController: UIViewController {
             }
         }
     }
+
 }

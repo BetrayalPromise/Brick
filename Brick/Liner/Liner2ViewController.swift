@@ -1,12 +1,12 @@
 import UIKit
 
-class Liner0ViewController: UIViewController {
-    
+class Liner2ViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "horizontal.size"
+        self.title = "horizontal.width"
     
         let v = ScopeLayout()
         v.backgroundColor = .red
@@ -16,7 +16,7 @@ class Liner0ViewController: UIViewController {
         v.scope = .safeArea
         
         let l = LinnerLayout(axie: .horizontal)
-        l.wrapper = .size
+        l.wrapper = .width
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
         l.frame = CGRect(x: 0, y: 0, width: 170, height: 70)
@@ -35,4 +35,5 @@ class Liner0ViewController: UIViewController {
             }
         }
     }
+
 }

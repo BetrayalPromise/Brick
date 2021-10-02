@@ -1,12 +1,19 @@
+//
+//  Liner4ViewController.swift
+//  Brick
+//
+//  Created by 李阳 on 2/10/2021.
+//
+
 import UIKit
 
-class Liner0ViewController: UIViewController {
-    
+class Liner4ViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "horizontal.size"
+        self.title = "vertical.height"
     
         let v = ScopeLayout()
         v.backgroundColor = .red
@@ -15,8 +22,8 @@ class Liner0ViewController: UIViewController {
         v.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         v.scope = .safeArea
         
-        let l = LinnerLayout(axie: .horizontal)
-        l.wrapper = .size
+        let l = LinnerLayout(axie: .vertical)
+        l.wrapper = .height
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
         l.frame = CGRect(x: 0, y: 0, width: 170, height: 70)
@@ -30,7 +37,7 @@ class Liner0ViewController: UIViewController {
             label.text =  ",lklkddfad\(i)"
             l.addSubview(label)
             if i == 1 {
-                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
+//                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
                 label.compressible = 400
             }
         }
