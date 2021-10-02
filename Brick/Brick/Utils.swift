@@ -18,8 +18,6 @@ extension UIView {
     private struct AssociatedKey {
         static var compressible = "UIViewAssociatedObjectKeyCompressible"
         static var stretchable = "UIViewAssociatedObjectKeyStretchable"
-        static var padding = "UIViewAssociatedObjectKeyPadding"
-        static var margin = "UIViewAssociatedObjectKeyMargin"
         static var offset = "UIViewAssociatedObjectKeyOffset"
     }
     
@@ -43,28 +41,6 @@ extension UIView {
         }
     }
     
-    /// 布局内边距,向内为正值向外为负值
-    /// 若视图为LayoutLabel及其之类的话该属性设置必须先于(UILabel.text,UILabel.attributedTex,UILabel.font)t进行设置,否则设置不生效
-    public var padding: UIEdgeInsets {
-        set {
-            if (self is UILabel) {
-                print("暂未实现UILabel.padding")
-            }
-            objc_setAssociatedObject(self, &AssociatedKey.padding, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        } get {
-            return objc_getAssociatedObject(self, &AssociatedKey.padding) as? UIEdgeInsets ?? .zero
-        }
-    }
-    /// 布局外边距影响的是试图的位置不影响试图的大小
-    /// 向视图内为正值向试图外为负值 会影响其余子试图位置
-    public var margin: UIEdgeInsets {
-        set {
-            objc_setAssociatedObject(self, &AssociatedKey.margin, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        } get {
-            return objc_getAssociatedObject(self, &AssociatedKey.margin) as? UIEdgeInsets ?? .zero
-        }
-    }
-    
     /// 布局外边距 向内为正值向外为负值 不会影响父试图和其余子试图位置
     /// offset.x为正值向右偏移offset.y为正值向左偏移
     /// offset.y为正值向偏移offset.y为正值向下偏移
@@ -77,7 +53,7 @@ extension UIView {
     }
 }
 
-public extension UIView {    
+public extension BaseLayout {
     enum BoxType {
         /// 计算padding范围大小
         case padding

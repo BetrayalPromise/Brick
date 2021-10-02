@@ -3,7 +3,11 @@ import UIKit
 import CoreGraphics
 
 open class BaseLayout: UIView {
-
+    /// 布局外边距影响的是试图的位置不影响试图的大小
+    /// 向视图内为正值向试图外为负值 会影响其余子试图位置
+    public var margin: UIEdgeInsets = .zero
+    /// 布局内边距,向内为正值向外为负值
+    public var padding: UIEdgeInsets = .zero
 }
 
 /// 为了解决UILabel的padding问题

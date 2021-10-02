@@ -26,8 +26,6 @@ class Liner0ViewController: UIViewController {
             let label = UILabel()
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-//            label.margin = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-            label.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             label.text =  ",lklkldfafadfadfadfadfad\(i)"
             label.font = UIFont.systemFont(ofSize: 32)
             l.addSubview(label)

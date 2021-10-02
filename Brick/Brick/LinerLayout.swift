@@ -51,19 +51,6 @@ open class LinnerLayout: BaseLayout {
     open override func addSubview(_ view: UIView) {
         super.addSubview(view)
         self.handles.append(view)
-//        guard let l: UILabel = view as? UILabel else {
-//            super.addSubview(view)
-//            self.handles.append(view)
-//            return
-//        }
-//        let label = LayoutLabel(frame: .zero)
-//        label.attributedText = l.attributedText
-//        label.backgroundColor = l.backgroundColor
-//        label.margin = l.margin
-//        label.padding = l.padding
-//        label.numberOfLines = l.numberOfLines
-//        super.addSubview(label)
-//        self.handles.append(label)
     }
     
     open override func layoutSubviews() {
@@ -96,19 +83,13 @@ extension LinnerLayout {
             item.frame = CGRect.zero
             item.sizeToFit()
             
-            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+            let origin = CGPoint(x: startX + item.offset.x, y: startY - item.offset.y)
+            item.frame = CGRect(origin: origin, size: item.frame.size)
             
             switch self.axie {
             case .horizontal:
-                if item.offset != .zero && item.margin != .zero {
-                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                } else if item.offset != .zero && item.padding == .zero {
-                    startX +=  item.frame.width  + self.space
-                } else {
-                    startX +=  item.frame.width  + self.space - item.margin.left + item.margin.right
-                }
-                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                startX +=  item.frame.width + self.space + item.offset.x
+                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
                     if item.frame.maxY + self.padding.bottom > height {
@@ -117,18 +98,12 @@ extension LinnerLayout {
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             case .vertical:
-                if item.offset != .zero && item.margin != .zero {
-                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                } else if item.offset != .zero && item.padding == .zero {
-                    startY += item.frame.height + self.space
-                } else {
-                    startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
-                }
-                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+                startY += item.frame.height + self.space + item.offset.y
+                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0
                 for item in svs {
-                    if item.frame.maxX + item.margin.right + self.padding.right > width {
-                        width = item.frame.maxX + item.margin.right + self.padding.right
+                    if item.frame.maxX + self.padding.right > width {
+                        width = item.frame.maxX + self.padding.right
                     }
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
@@ -148,19 +123,13 @@ extension LinnerLayout {
             item.frame = CGRect.zero
             item.sizeToFit()
             
-            let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-            item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+            let origin = CGPoint(x: startX + item.offset.x, y: startY - item.offset.y)
+            item.frame = CGRect(origin: origin, size: item.frame.size)
             
             switch self.axie {
             case .horizontal:
-                if item.offset != .zero && item.margin != .zero {
-                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                } else if item.offset != .zero && item.padding == .zero {
-                    startX +=  item.frame.width  + self.space
-                } else {
-                    startX +=  item.frame.width + self.space - item.margin.left + item.margin.right
-                }
-                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                startX +=  item.frame.width + self.space + item.offset.x
+                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
                     if item.frame.maxY + self.padding.bottom > height {
@@ -169,17 +138,11 @@ extension LinnerLayout {
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
             case .vertical:
-                if item.offset != .zero && item.margin != .zero {
-                    fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                } else if item.offset != .zero && item.padding == .zero {
-                    startY += item.frame.height + self.space
-                } else {
-                    startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
-                }
+                startY += item.frame.height + self.space
                 var width: CGFloat = 0.0
                 for item in svs {
-                    if item.frame.maxX + item.margin.right + self.padding.right > width {
-                        width = item.frame.maxX + item.margin.right + self.padding.right
+                    if item.frame.maxX + self.padding.right > width {
+                        width = item.frame.maxX + self.padding.right
                     }
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
@@ -204,7 +167,7 @@ extension LinnerLayout {
             }
             item.frame = CGRect.zero
             item.sizeToFit()
-            totalSubviewsWidth += item.size(with: .margin).width + self.space
+            totalSubviewsWidth += item.frame.size.width + self.space
         }
         totalSubviewsWidth -= self.space
         
@@ -220,19 +183,13 @@ extension LinnerLayout {
                 item.frame = CGRect.zero
                 item.sizeToFit()
                 
-                let origin = CGPoint(x: startX - item.margin.left + item.margin.right + item.offset.x, y: startY - item.margin.top + item.margin.bottom - item.offset.y)
-                item.frame = CGRect(origin: origin, size: item.size(with: .bounds))
+                let origin = CGPoint(x: startX + item.offset.x, y: startY - item.offset.y)
+                item.frame = CGRect(origin: origin, size: item.frame.size)
                 
                 switch self.axie {
                 case .horizontal:
-                    if item.offset != .zero && item.margin != .zero {
-                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                    } else if item.offset != .zero && item.padding == .zero {
-                        startX +=  item.frame.width  + self.space
-                    } else {
-                        startX +=  item.frame.width  + self.space - item.margin.left + item.margin.right
-                    }
-                    let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                    startX +=  item.frame.width  + self.space
+                    let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                     var height: CGFloat = 0.0
                     for item in svs {
                         if item.frame.maxY + self.padding.bottom > height {
@@ -241,18 +198,12 @@ extension LinnerLayout {
                     }
                     self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
                 case .vertical:
-                    if item.offset != .zero && item.margin != .zero {
-                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                    } else if item.offset != .zero && item.padding == .zero {
-                        startY += item.frame.height + self.space
-                    } else {
-                        startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
-                    }
-                    let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+                    startY += item.frame.height + self.space
+                    let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                     var width: CGFloat = 0.0
                     for item in svs {
-                        if item.frame.maxX + item.margin.right + self.padding.right > width {
-                            width = item.frame.maxX + item.margin.right + self.padding.right
+                        if item.frame.maxX + self.padding.right > width {
+                            width = item.frame.maxX + self.padding.right
                         }
                     }
                     self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
@@ -313,16 +264,10 @@ extension LinnerLayout {
                 var startX: CGFloat = self.padding.left
                 let startY: CGFloat = self.padding.top
                 for item in layoutViews {
-                    item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left + item.offset.x, y: startY + item.margin.top - item.offset.y), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
-                    if item.offset != .zero && item.margin != .zero {
-                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                    } else if item.offset != .zero && item.padding == .zero {
-                        startX +=  item.frame.width  + self.space
-                    } else {
-                        startX +=  item.frame.width  + self.space - item.margin.left + item.margin.right
-                    }
+                    item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
+                    startX +=  item.frame.width  + self.space
                 }
-                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + (svs.last?.margin.right ?? 0.0) + self.padding.right
+                let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
                     if item.frame.maxY + self.padding.bottom > height {
@@ -334,26 +279,20 @@ extension LinnerLayout {
                 let startX: CGFloat = self.padding.left
                 var startY: CGFloat = self.padding.top
                 for item in svs {
-                    if item.frame.size.width > self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right {
-                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
-                        item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left + item.offset.x, y: startY + item.margin.top - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: size.height))
+                    if item.frame.size.width > self.frame.size.width - self.padding.left - self.padding.right {
+                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right , height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: size.height))
                     } else {
-                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: 0.0))
-                        item.frame = CGRect(origin: CGPoint(x: startX + item.margin.left + item.offset.x, y: startY + item.margin.top - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right - item.margin.left - item.margin.right, height: size.height))
+                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: size.height))
                     }
-                    if item.offset != .zero && item.margin != .zero {
-                        fatalError("UIView.offset和UIView.margin二者只能设置一个")
-                    } else if item.offset != .zero && item.padding == .zero {
-                        startY += item.frame.height + self.space
-                    } else {
-                        startY += item.frame.height + self.space - item.margin.top + item.margin.bottom
-                    }
+                    startY += item.frame.height + self.space
                 }
-                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + (svs.last?.margin.bottom ?? 0.0) + self.padding.bottom
+                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0
                 for item in svs {
-                    if item.frame.maxX + item.margin.right + self.padding.right > width {
-                        width = item.frame.maxX + item.margin.right + self.padding.right
+                    if item.frame.maxX + self.padding.right > width {
+                        width = item.frame.maxX + self.padding.right
                     }
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
@@ -366,7 +305,7 @@ extension LinnerLayout {
 extension Array where Element == UIView {
     func totalWidth() -> CGFloat {
         return self.reduce(0.0) { x, y in
-            return x + y.size(with: .margin).width
+            return x + y.frame.size.width
         }
     }
 }
