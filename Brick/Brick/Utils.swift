@@ -106,3 +106,70 @@ public extension BaseLayout {
     }
 }
 
+extension Array where Element == UIView {
+    func totalWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x + y.frame.size.width
+        }
+    }
+    
+    func totalHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x + y.frame.size.height
+        }
+    }
+    
+    func minWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return y.frame.width }
+            return  x < y.frame.width ? y.frame.width : x
+        }
+    }
+    
+    func maxWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x > y.frame.width ? x : y.frame.width
+        }
+    }
+    
+    func minHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return y.frame.height }
+            return  x < y.frame.height ? y.frame.height : x
+        }
+    }
+    
+    func maxHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            return x > y.frame.height ? x : y.frame.height
+        }
+    }
+    
+    func maxY() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return x + y.frame.maxY }
+            return x > y.frame.maxY ? x : y.frame.maxY
+        }
+    }
+    
+    func minY() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return x + y.frame.minY }
+            return x < y.frame.minY ? x : y.frame.minY
+        }
+    }
+    
+    func maxX() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return x + y.frame.maxX }
+            return x > y.frame.maxX ? x : y.frame.maxX
+        }
+    }
+    
+    func minX() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return x + y.frame.minX }
+            return x < y.frame.minX ? x : y.frame.minX
+        }
+    }
+}
