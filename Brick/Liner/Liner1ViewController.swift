@@ -6,7 +6,7 @@ class Liner1ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "horizontal.height"
+        self.title = "horizontal.autoHeight"
     
         let v = ScopeLayout()
         v.backgroundColor = .red

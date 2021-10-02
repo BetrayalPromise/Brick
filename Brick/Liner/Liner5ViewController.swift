@@ -13,7 +13,7 @@ class Liner5ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "vertical.width"
+        self.title = "vertical.autoWidth"
     
         let v = ScopeLayout()
         v.backgroundColor = .red

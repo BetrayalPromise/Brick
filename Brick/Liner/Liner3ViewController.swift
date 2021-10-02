@@ -13,7 +13,7 @@ class Liner3ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "vertical.size"
+        self.title = "vertical.autoSize"
     
         let v = ScopeLayout()
         v.backgroundColor = .red

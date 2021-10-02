@@ -13,7 +13,7 @@ class Liner4ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = "vertical.height"
+        self.title = "vertical.autoHeight"
     
         let v = ScopeLayout()
         v.backgroundColor = .red
