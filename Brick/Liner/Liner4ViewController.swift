@@ -1,10 +1,3 @@
-//
-//  Liner4ViewController.swift
-//  Brick
-//
-//  Created by 李阳 on 2/10/2021.
-//
-
 import UIKit
 
 class Liner4ViewController: UIViewController {

@@ -1,5 +1,6 @@
 import Foundation
 import CoreGraphics
+import UIKit
 
 /// 布局尺寸处理
 public enum LayoutScope {
@@ -8,6 +9,8 @@ public enum LayoutScope {
 }
 
 open class ScopeLayout: BaseLayout {
+    var handles: [UIView] = []
+    
     public var scope: LayoutScope = .safeArea {
         didSet {
             if #available(iOS 11, *) {
@@ -30,6 +33,11 @@ open class ScopeLayout: BaseLayout {
                 print("不支持之前的UIViewController.topLayoutGuide和UIViewController.bottomLayoutGuide")
             }
         }
+    }
+    
+    open override func addSubview(_ view: UIView) {
+        super.addSubview(view)
+        self.handles.append(view)
     }
     
     open override func layoutSubviews() {

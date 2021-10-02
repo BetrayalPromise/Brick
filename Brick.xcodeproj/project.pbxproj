@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6F023C6826FF113B00CAC764 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F023C6726FF113B00CAC764 /* RootViewController.swift */; };
+		6F4451C72708254100C0D032 /* Liner6ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4451C62708254100C0D032 /* Liner6ViewController.swift */; };
+		6F4451C9270828B300C0D032 /* ViewAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4451C8270828B300C0D032 /* ViewAttribute.swift */; };
 		6F503D9926FA225800088C8D /* ScopeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9426FA225700088C8D /* ScopeLayout.swift */; };
 		6F503D9A26FA225800088C8D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9526FA225800088C8D /* Utils.swift */; };
 		6F503D9B26FA225800088C8D /* NameSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F503D9626FA225800088C8D /* NameSpace.swift */; };
@@ -29,6 +31,8 @@
 
 /* Begin PBXFileReference section */
 		6F023C6726FF113B00CAC764 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		6F4451C62708254100C0D032 /* Liner6ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Liner6ViewController.swift; sourceTree = "<group>"; };
+		6F4451C8270828B300C0D032 /* ViewAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAttribute.swift; sourceTree = "<group>"; };
 		6F503D9426FA225700088C8D /* ScopeLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScopeLayout.swift; sourceTree = "<group>"; };
 		6F503D9526FA225800088C8D /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6F503D9626FA225800088C8D /* NameSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NameSpace.swift; sourceTree = "<group>"; };
@@ -70,6 +74,7 @@
 				6F5E5853270805D2009A8E6E /* Liner3ViewController.swift */,
 				6F5E5855270805FA009A8E6E /* Liner4ViewController.swift */,
 				6F5E585727080637009A8E6E /* Liner5ViewController.swift */,
+				6F4451C62708254100C0D032 /* Liner6ViewController.swift */,
 			);
 			path = Liner;
 			sourceTree = "<group>";
@@ -115,6 +120,7 @@
 				6F503D9626FA225800088C8D /* NameSpace.swift */,
 				6F503D9426FA225700088C8D /* ScopeLayout.swift */,
 				6F503D9526FA225800088C8D /* Utils.swift */,
+				6F4451C8270828B300C0D032 /* ViewAttribute.swift */,
 			);
 			path = Brick;
 			sourceTree = "<group>";
@@ -193,9 +199,11 @@
 				6F5E585827080637009A8E6E /* Liner5ViewController.swift in Sources */,
 				6F503D9A26FA225800088C8D /* Utils.swift in Sources */,
 				6F503D9926FA225800088C8D /* ScopeLayout.swift in Sources */,
+				6F4451C72708254100C0D032 /* Liner6ViewController.swift in Sources */,
 				6F023C6826FF113B00CAC764 /* RootViewController.swift in Sources */,
 				6F503D9C26FA225800088C8D /* BaseLayout.swift in Sources */,
 				6F503DA226FA228500088C8D /* Liner0ViewController.swift in Sources */,
+				6F4451C9270828B300C0D032 /* ViewAttribute.swift in Sources */,
 				6F503D9D26FA225800088C8D /* LinerLayout.swift in Sources */,
 				6F5E5850270726D6009A8E6E /* Liner1ViewController.swift in Sources */,
 				6F503D9F26FA227600088C8D /* DeviceSize.swift in Sources */,

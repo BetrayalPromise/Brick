@@ -10,26 +10,36 @@ open class BaseLayout: UIView {
     public var padding: UIEdgeInsets = .zero
     
     public var debug: Bool = true
-    public lazy var debugColor: UIColor = { return self.randomColor() }()
     
-    override open func draw(_ rect: CGRect) {
-        guard self.debug, bounds != .zero else {
-            super.draw(rect)
-            return
+    open override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        if self.debug {
+            guard let context = UIGraphicsGetCurrentContext() else { return }
+            context.clear(rect)
+            //创建一个矩形，它的所有边都内缩3
+            let  drawingRect = self.bounds.insetBy(dx: 0.1, dy: 0.1)
+            //创建并设置路径
+            let path = CGMutablePath()
+            path.addRect(drawingRect)
+            //添加路径到图形上下文
+            context.addPath(path)
+            //设置笔触颜色
+            context.setStrokeColor(UIColor.orange.cgColor)
+            context.setFillColor(self.backgroundColor?.cgColor ?? UIColor.white.cgColor)
+            context.setLineWidth(2 / UIScreen.main.scale)
+            let  lengths: [CGFloat] = [4, 4]
+            //设置虚线样式
+            context.setLineDash(phase: 0, lengths: lengths)
+            context.drawPath(using: .fillStroke)
+            //绘制路径
+            context.strokePath()
+            context.restoreGState()
         }
-        
-        guard let context = UIGraphicsGetCurrentContext() else { return }
-        context.saveGState()
-        context.setStrokeColor(debugColor.cgColor)
-        context.setLineDash(phase: 0, lengths: [4.0, 2.0])
-        context.stroke(bounds)
-        context.restoreGState()
     }
     
-    fileprivate func randomColor() -> UIColor {
-        let colors: [UIColor] = [.red, .green, .blue, .brown, .gray, .yellow, .magenta, .black, .orange, .purple, .cyan]
-        let randomIndex = Int(arc4random()) % colors.count
-        return colors[randomIndex]
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        print(#function)
     }
 }
 
@@ -74,3 +84,12 @@ open class BaseLayout: UIView {
 //        return CGSize(width: size.width + self.padding.left + self.padding.right, height: size.height + self.padding.top + self.padding.bottom)
 //    }
 //}
+
+extension UIColor {
+    static func random() -> UIColor {
+        let red = CGFloat(arc4random() % 256) / 255.0
+        let green = CGFloat(arc4random() % 256) / 255.0
+        let blue = CGFloat(arc4random() % 256) / 255.0
+        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+    }
+}
