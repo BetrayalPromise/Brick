@@ -82,13 +82,15 @@ extension LinnerLayout {
         for item in svs {
             item.frame = CGRect.zero
             item.sizeToFit()
-            
             let origin = CGPoint(x: startX + item.offset.x, y: startY - item.offset.y)
             item.frame = CGRect(origin: origin, size: item.frame.size)
-            
             switch self.axie {
             case .horizontal:
-                startX +=  item.frame.width + self.space + item.offset.x
+                if item.effect {
+                    startX +=  item.frame.width + self.space + item.offset.x
+                } else {
+                    startX +=  item.frame.width + self.space
+                }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
@@ -98,7 +100,11 @@ extension LinnerLayout {
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             case .vertical:
-                startY += item.frame.height + self.space + item.offset.y
+                if item.effect {
+                    startY += item.frame.height + self.space + item.offset.y
+                } else {
+                    startY += item.frame.height + self.space
+                }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0
                 for item in svs {
@@ -128,7 +134,11 @@ extension LinnerLayout {
             
             switch self.axie {
             case .horizontal:
-                startX +=  item.frame.width + self.space + item.offset.x
+                if item.effect {
+                    startX +=  item.frame.width + self.space + item.offset.x
+                } else {
+                    startX +=  item.frame.width + self.space
+                }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
                 for item in svs {
@@ -138,7 +148,11 @@ extension LinnerLayout {
                 }
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
             case .vertical:
-                startY += item.frame.height + self.space
+                if item.effect {
+                    startY += item.frame.height + self.space + item.offset.y
+                } else {
+                    startY += item.frame.height + self.space
+                }
                 var width: CGFloat = 0.0
                 for item in svs {
                     if item.frame.maxX + self.padding.right > width {
@@ -188,7 +202,11 @@ extension LinnerLayout {
                 
                 switch self.axie {
                 case .horizontal:
-                    startX +=  item.frame.width  + self.space
+                    if item.effect {
+                        startX +=  item.frame.width  + self.space + item.offset.x
+                    } else {
+                        startX +=  item.frame.width  + self.space
+                    }
                     let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                     var height: CGFloat = 0.0
                     for item in svs {
@@ -198,7 +216,12 @@ extension LinnerLayout {
                     }
                     self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
                 case .vertical:
-                    startY += item.frame.height + self.space
+                    if item.effect {
+                        startY += item.frame.height + self.space + item.offset.y
+                    } else {
+                        startY += item.frame.height + self.space
+                    }
+                    
                     let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                     var width: CGFloat = 0.0
                     for item in svs {
@@ -265,7 +288,11 @@ extension LinnerLayout {
                 let startY: CGFloat = self.padding.top
                 for item in layoutViews {
                     item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: item.frame.size.width, height: item.frame.size.height))
-                    startX +=  item.frame.width  + self.space
+                    if item.effect {
+                        startX +=  item.frame.width  + self.space + item.offset.x
+                    } else {
+                        startX +=  item.frame.width  + self.space
+                    }
                 }
                 let width: CGFloat = (svs.last?.frame.maxX ?? 0.0) + self.padding.right
                 var height: CGFloat = 0.0
@@ -286,7 +313,11 @@ extension LinnerLayout {
                         let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: 0.0))
                         item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: size.height))
                     }
-                    startY += item.frame.height + self.space
+                    if item.effect {
+                        startY += item.frame.height + self.space + item.offset.y
+                    } else {
+                        startY += item.frame.height + self.space
+                    }
                 }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
                 var width: CGFloat = 0.0

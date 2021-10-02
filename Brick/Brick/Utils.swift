@@ -19,6 +19,7 @@ extension UIView {
         static var compressible = "UIViewAssociatedObjectKeyCompressible"
         static var stretchable = "UIViewAssociatedObjectKeyStretchable"
         static var offset = "UIViewAssociatedObjectKeyOffset"
+        static var effect = "UIViewAssociatedObjectKeyEffect"
     }
     
     /// 视图坚硬程度类比自动布局抗压抗拉属性
@@ -44,12 +45,29 @@ extension UIView {
     /// 布局外边距 向内为正值向外为负值 不会影响父试图和其余子试图位置
     /// offset.x为正值向右偏移offset.y为正值向左偏移
     /// offset.y为正值向偏移offset.y为正值向下偏移
-    public var offset: CGPoint {
+    internal var offset: CGPoint {
         set {
             objc_setAssociatedObject(self, &AssociatedKey.offset, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         } get {
             return objc_getAssociatedObject(self, &AssociatedKey.offset) as? CGPoint ?? .zero
         }
+    }
+    
+    internal var effect: Bool {
+        set {
+            objc_setAssociatedObject(self, &AssociatedKey.effect, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        } get {
+            return objc_getAssociatedObject(self, &AssociatedKey.effect) as? Bool ?? false
+        }
+    }
+    
+    /// 位置偏移
+    /// - Parameters:
+    ///   - value: 偏移值
+    ///   - effect: 是否影响其他子视图的位置,不会影响父级视图的位置和大小
+    public func offset(value: CGPoint, effect: Bool = false) {
+        self.offset = value
+        self.effect = effect
     }
 }
 
