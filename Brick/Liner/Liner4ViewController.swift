@@ -34,12 +34,8 @@ class Liner4ViewController: UIViewController {
             let label = UILabel()
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-            label.text =  ",lklkddfad\(i)"
+            label.text =  ",lkldfadadfadfadfakddfad\(i)"
             l.addSubview(label)
-            if i == 1 {
-//                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
-                label.compressible = 400
-            }
         }
     }
 }

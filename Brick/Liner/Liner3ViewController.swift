@@ -36,10 +36,10 @@ class Liner3ViewController: UIViewController {
             label.backgroundColor = .yellow
             label.text =  ",lklkddfad\(i)"
             l.addSubview(label)
-            if i == 1 {
-                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
-                label.compressible = 400
-            }
+//            if i == 1 {
+//                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
+//                label.compressible = 400
+//            }
         }
     }
 

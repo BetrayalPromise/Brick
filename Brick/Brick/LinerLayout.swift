@@ -17,9 +17,12 @@ public struct Wrapper: OptionSet {
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
     }
-    static let none = Wrapper([])
+    
+    /// 大小自适应
     static let size = Wrapper(rawValue: 1 << 0)
+    /// 宽度自适应
     static let width = Wrapper(rawValue: 1 << 1)
+    /// 高度自适应
     static let height = Wrapper(rawValue: 1 << 2)
 }
 
@@ -101,7 +104,7 @@ extension LinnerLayout {
                 } else {
                     startY += item.frame.height + self.space
                 }
-                let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
+                let height: CGFloat = svs.maxY() + self.padding.bottom
                 let width: CGFloat = svs.maxWidth() + self.padding.left + self.padding.right
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
             }
@@ -139,8 +142,11 @@ extension LinnerLayout {
                 } else {
                     startY += item.frame.height + self.space
                 }
-                let width: CGFloat = svs.maxWidth() + self.padding.right
+                let width: CGFloat = svs.maxWidth() + self.padding.left + self.padding.right
                 self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: self.frame.height))
+                if item.frame.maxY > self.frame.height {
+                    print("!!!警告!!!: 子试图超出父视图范围")
+                }
             }
         }
     }
@@ -276,8 +282,8 @@ extension LinnerLayout {
                         let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right , height: 0.0))
                         item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: size.height))
                     } else {
-                        let size = item.sizeThatFits(CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: 0.0))
-                        item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: CGSize(width: self.frame.size.width - self.padding.left - self.padding.right, height: size.height))
+                        let size = item.sizeThatFits(CGSize(width: item.frame.size.width, height: 0.0))
+                        item.frame = CGRect(origin: CGPoint(x: startX + item.offset.x, y: startY - item.offset.y), size: size)
                     }
                     if item.effect {
                         startY += item.frame.height + self.space + item.offset.y
@@ -286,8 +292,7 @@ extension LinnerLayout {
                     }
                 }
                 let height: CGFloat = (svs.last?.frame.maxY ?? 0.0) + self.padding.bottom
-                let width: CGFloat = svs.maxWidth() + self.padding.right
-                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: width, height: height))
+                self.frame = CGRect(origin: self.frame.origin, size: CGSize(width: self.frame.width, height: height))
             }
         }
     }
@@ -307,15 +312,36 @@ extension Array where Element == UIView {
         }
     }
     
+    func minWidth() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return y.frame.width }
+            return  x < y.frame.width ? y.frame.width : x
+        }
+    }
+    
     func maxWidth() -> CGFloat {
         return self.reduce(0.0) { x, y in
             return x > y.frame.width ? x : y.frame.width
         }
     }
     
+    func minHeight() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return y.frame.height }
+            return  x < y.frame.height ? y.frame.height : x
+        }
+    }
+    
     func maxHeight() -> CGFloat {
         return self.reduce(0.0) { x, y in
             return x > y.frame.height ? x : y.frame.height
+        }
+    }
+    
+    func maxY() -> CGFloat {
+        return self.reduce(0.0) { x, y in
+            if x == 0.0 { return y.frame.maxY }
+            return x > y.frame.maxY ? x : y.frame.maxY
         }
     }
 }

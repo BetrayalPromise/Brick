@@ -8,6 +8,29 @@ open class BaseLayout: UIView {
     public var margin: UIEdgeInsets = .zero
     /// 布局内边距,向内为正值向外为负值
     public var padding: UIEdgeInsets = .zero
+    
+    public var debug: Bool = true
+    public lazy var debugColor: UIColor = { return self.randomColor() }()
+    
+    override open func draw(_ rect: CGRect) {
+        guard self.debug, bounds != .zero else {
+            super.draw(rect)
+            return
+        }
+        
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        context.saveGState()
+        context.setStrokeColor(debugColor.cgColor)
+        context.setLineDash(phase: 0, lengths: [4.0, 2.0])
+        context.stroke(bounds)
+        context.restoreGState()
+    }
+    
+    fileprivate func randomColor() -> UIColor {
+        let colors: [UIColor] = [.red, .green, .blue, .brown, .gray, .yellow, .magenta, .black, .orange, .purple, .cyan]
+        let randomIndex = Int(arc4random()) % colors.count
+        return colors[randomIndex]
+    }
 }
 
 /// 为了解决UILabel的padding问题

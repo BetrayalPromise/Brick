@@ -26,20 +26,16 @@ class Liner5ViewController: UIViewController {
         l.wrapper = .width
         l.padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         l.space = 10
-        l.frame = CGRect(x: 0, y: 0, width: 170, height: 70)
+        l.frame = CGRect(x: 0, y: 0, width: 170, height: 100)
         l.backgroundColor = .blue
         v.addSubview(l)
         
-        for i in 0...2 {
+        for i in 0...5 {
             let label = UILabel()
             label.numberOfLines = 0
             label.backgroundColor = .yellow
-            label.text =  ",lklkddfad\(i)"
+            label.text =  ",lklkddfdfadfaad\(i)"
             l.addSubview(label)
-            if i == 1 {
-                label.offset(value: CGPoint(x: 0, y: 10), effect: true)
-                label.compressible = 400
-            }
         }
     }
 
