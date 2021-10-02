@@ -34,5 +34,9 @@ class Liner0ViewController: UIViewController {
                 label.compressible = 400
             }
         }
+        
+        l.width >= 100
+        l.height == 200
+        print(l.constraints)
     }
 }
