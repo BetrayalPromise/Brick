@@ -7,7 +7,10 @@ class Related0ViewController: UIViewController {
         
         self.view.backgroundColor = .random()
         
-        let label = UILabel(frame: .zero)
-        self.view.addSubview(label)
+        let node = TextNode()
+        node.text = "dfadfadf"
+        node.width == 100
+        
+        
     }
 }

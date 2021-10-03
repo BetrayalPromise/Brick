@@ -8,7 +8,7 @@ public enum ContentMode {
 
 open class ImageNode: ControlNode {
     public var image: UIImage? {
-        didSet{
+        didSet {
             if image != oldValue {
                 invalidateIntrinsicContentSize()
                 setNeedsDisplay()
@@ -18,9 +18,9 @@ open class ImageNode: ControlNode {
     
     public var processor: ImageProcessor? = nil
     
-    public var contentMode: ContentMode = .scaleAspectToFill{
-        didSet{
-            if oldValue != contentMode{
+    public var contentMode: ContentMode = .scaleAspectToFill {
+        didSet {
+            if oldValue != contentMode {
                 setNeedsDisplay()
             }
         }
@@ -34,7 +34,7 @@ open class ImageNode: ControlNode {
     }
     
     override func contentForLayer(_ layer: AsyncDisplayLayer, isCancel: () -> Bool) -> UIImage? {
-        guard let image = image ,bounds.width > 0, bounds.height > 0 else{
+        guard let image = image ,bounds.width > 0, bounds.height > 0 else {
             return nil
         }
         

@@ -18,41 +18,41 @@ open class ViewNode: Layoutable {
         }
     }
     
-    open var alpha: CGFloat = 1{
-        didSet{
+    open var alpha: CGFloat = 1 {
+        didSet {
             if oldValue != alpha {
                 commitUpdate()
             }
         }
     }
     
-    open var borderColor = UIColor.clear{
-        didSet{
-            if oldValue != borderColor{
+    open var borderColor = UIColor.clear {
+        didSet {
+            if oldValue != borderColor {
                 commitUpdate()
             }
         }
     }
     
-    open var borderWidth: CGFloat = 0{
-        didSet{
+    open var borderWidth: CGFloat = 0 {
+        didSet {
             if oldValue != borderWidth{
                 commitUpdate()
             }
         }
     }
     
-    open var cornerRadius: CGFloat = 0{
-        didSet{
-            if oldValue != cornerRadius{
+    open var cornerRadius: CGFloat = 0 {
+        didSet {
+            if oldValue != cornerRadius {
                 commitUpdate()
             }
         }
     }
     
-    open var frame: CGRect = .zero{
-        didSet{
-            if oldValue != frame{
+    open var frame: CGRect = .zero {
+        didSet {
+            if oldValue != frame {
                 frameDidUpdate = true
                 setNeedsDisplay()
                 layoutSubItems()
@@ -60,37 +60,37 @@ open class ViewNode: Layoutable {
         }
     }
     
-    open var hidden = false{
-        didSet{
-            if oldValue != hidden{
+    open var hidden = false {
+        didSet {
+            if oldValue != hidden {
                 commitUpdate()
             }
         }
     }
     
-    open var bounds: CGRect{
+    open var bounds: CGRect {
         return CGRect(origin: .zero, size: frame.size)
     }
     
     // make sure to call this on main thread
-    private lazy var displayView = ProxyView(for: self){ (layer: AsyncDisplayLayer) in
+    private lazy var displayView = ProxyView(for: self) { (layer: AsyncDisplayLayer) in
         layer.contentAction = { [weak self] ( isCanceled: CancelBlock) in
             self?.contentForLayer(layer, isCancel: isCanceled)
         }
     }
     
-    public var layer: CALayer{
+    public var layer: CALayer {
         return view.layer
     }
     
-    public var view: UIView{
+    public var view: UIView {
         assert(Thread.current.isMainThread, "view property should be called from main thread")
         displayView.isUserInteractionEnabled = userInteractionEnabled
         
         // need to optimize
-        if isInHierarchy{
-            subnodes.forEach{
-                if !$0.isInHierarchy{
+        if isInHierarchy {
+            subnodes.forEach {
+                if !$0.isInHierarchy {
                     displayView.addSubview($0.view)
                     $0.view.frame = $0.frame
                     $0.view.layer.display()
@@ -111,43 +111,42 @@ open class ViewNode: Layoutable {
     private var frameDidUpdate = false
     
     // change access control level to public
-    public init(){}
+    public init() {}
     
-    open func sizeToFit(){
+    open func sizeToFit() {
         frame = CGRect(origin: frame.origin, size: itemIntrinsicContentSize)
     }
     
-    open func sizeThatFit(_ size: CGSize) -> CGSize{
+    open func sizeThatFit(_ size: CGSize) -> CGSize {
         return itemIntrinsicContentSize.constrainted(to: size)
     }
     
-    open func setNeedsDisplay(){
+    open func setNeedsDisplay() {
         layerNeedsDisplay = true
         Transaction.addObserver(self)
     }
     
-    open func setNeedsLayout(){
+    open func setNeedsLayout() {
         layoutNeedsUpdate = true
         Transaction.addObserver(self)
     }
     
-    open func invalidateIntrinsicContentSize(){
+    open func invalidateIntrinsicContentSize() {
         setNeedsLayout()
     }
     
-    open func disableAutoUpdate(_ disable: Bool){
+    open func disableAutoUpdate(_ disable: Bool) {
         enableAutoUpdate = !disable
         subnodes.forEach{ $0.disableAutoUpdate(!disable) }
     }
     
-    func commitUpdate(){
+    func commitUpdate() {
         viewNeedsUpdate = true
         Transaction.addObserver(self)
     }
     
-    func updateIfNeed(){
-        
-        if viewNeedsUpdate{
+    func updateIfNeed() {
+        if viewNeedsUpdate {
             view.isHidden = hidden
             view.alpha = alpha
             view.backgroundColor = backgroundColor
@@ -157,45 +156,45 @@ open class ViewNode: Layoutable {
             viewNeedsUpdate = false
         }
         
-        if frameDidUpdate{
+        if frameDidUpdate {
             view.frame = frame
             frameDidUpdate = false
         }
         
-        if layerNeedsDisplay{
+        if layerNeedsDisplay {
             layer.display()
             layerNeedsDisplay = false
         }
     }
     
-    public func layoutIfNeeded(){
+    public func layoutIfNeeded() {
         layoutIfEnabled()
     }
     
-    public var layoutRect: CGRect{
-        set{ frame = newValue.pixelRounded }
-        get{ return frame }
+    public var layoutRect: CGRect {
+        set { frame = newValue.pixelRounded }
+        get { return frame }
     }
     
-    open var itemIntrinsicContentSize: CGSize{
+    open var itemIntrinsicContentSize: CGSize {
         return InvaidIntrinsicSize
     }
     
     // Overrde this method to provide custom drawing Content
     // This method may running in background thread
-    open func drawContent(in context: CGContext){}
+    open func drawContent(in context: CGContext) {}
     
-    open func addSubnode(_ node: ViewNode){
+    open func addSubnode(_ node: ViewNode) {
         node.superNode = self
         node.enableAutoUpdate = enableAutoUpdate
         subnodes.append(node)
     }
     
-    open func addSubnodes(_ nodes: [ViewNode]){
+    open func addSubnodes(_ nodes: [ViewNode]) {
         nodes.forEach{ addSubnode($0)}
     }
     
-    open func removeSubnode(_ node: ViewNode){
+    open func removeSubnode(_ node: ViewNode) {
         if let index = subnodes.firstIndex(of: node){
             node.superNode = nil
             subnodes.remove(at: index)
@@ -207,47 +206,47 @@ open class ViewNode: Layoutable {
         }
     }
     
-    open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool{
+    open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return (view as! ProxyView).forwardGestureRecognizerShouldBegin(gestureRecognizer)
     }
     
-    open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         (view as! ProxyView).forwardTouchesBegan(touches, with: event)
     }
     
-    open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         (view as! ProxyView).forwardTouchesMoved(touches, with: event)
     }
     
-    open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         (view as! ProxyView).forwardTouchesEnded(touches, with: event)
     }
     
-    open func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         (view as! ProxyView).forwardTouchesCancelled(touches, with: event)
     }
     
-    open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView?{
+    open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         return view.hitTest(point, with:event)
     }
     
-    open func point(inside point: CGPoint, with event: UIEvent?) -> Bool{
+    open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return view.point(inside:point, with:event)
     }
     
-    open func convert(_ point: CGPoint, to node: ViewNode?) -> CGPoint{
+    open func convert(_ point: CGPoint, to node: ViewNode?) -> CGPoint {
         return view.convert(point, to: node?.view)
     }
     
-    open func convert(_ point: CGPoint, from node: ViewNode?) -> CGPoint{
+    open func convert(_ point: CGPoint, from node: ViewNode?) -> CGPoint {
         return view.convert(point, from: node?.view)
     }
     
-    open func convert(_ rect: CGRect, to node: ViewNode?) -> CGRect{
+    open func convert(_ rect: CGRect, to node: ViewNode?) -> CGRect {
         return view.convert(rect, to: node?.view)
     }
     
-    open func convert(_ rect: CGRect, from node: ViewNode?) -> CGRect{
+    open func convert(_ rect: CGRect, from node: ViewNode?) -> CGRect {
         return view.convert(rect, from: node?.view)
     }
     
@@ -313,7 +312,7 @@ extension ViewNode: RunloopObserver {
         if !isInHierarchy {
             return
         }
-        if layoutNeedsUpdate{
+        if layoutNeedsUpdate {
             layoutIfNeeded()
         }
         updateIfNeed()

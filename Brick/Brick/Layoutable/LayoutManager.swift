@@ -84,44 +84,43 @@ final public class LayoutManager {
         }
     }
     
-    func addConstraint(_ constraint: LayoutConstraint){
+    func addConstraint(_ constraint: LayoutConstraint) {
         newlyAddedConstraints.insert(constraint)
     }
     
-    func removeConstraint(_ constraint: LayoutConstraint){
+    func removeConstraint(_ constraint: LayoutConstraint) {
         newlyAddedConstraints.remove(constraint)
         installedConstraints.remove(constraint)
     }
     
-    func updateSize(_ size: CGSize){
+    func updateSize(_ size: CGSize) {
         guard let item = item else { return }
         contentSizeConstraints.updateSize(size, node: item)
     }
     
-    func updateRect(_ rect: CGRect){
+    func updateRect(_ rect: CGRect) {
         guard let item = item else { return }
         sizeConstraints.updateSize(rect.size, node: item)
         positionConstraints.updateOrigin(rect.origin, node: item)
     }
     
     /// final caculated rect for this item
-    var layoutRect: CGRect{
+    var layoutRect: CGRect {
         return variable.frame
     }
 }
 
-final class ContentSizeConstraints{
-    
+final class ContentSizeConstraints {
     class Axis{
-        var huggingPriorty = LayoutPriority.medium{
-            didSet{
-                if let hugging = hugging{
+        var huggingPriorty = LayoutPriority.medium {
+            didSet {
+                if let hugging = hugging {
                     hugging.priority = huggingPriorty
                 }
             }
         }
         
-        var compressionPriorty = LayoutPriority.strong{
+        var compressionPriorty = LayoutPriority.strong {
             didSet{
                 if let compression = compression{
                     compression.priority = compressionPriorty
@@ -137,7 +136,7 @@ final class ContentSizeConstraints{
     var yAxis = Axis()
     
     /// update content size Constraint
-    func updateSize(_ size: CGSize,node: Layoutable){
+    func updateSize(_ size: CGSize,node: Layoutable) {
         
         if size.width != InvalidIntrinsicMetric{
             if let width = xAxis.hugging,
@@ -146,20 +145,20 @@ final class ContentSizeConstraints{
                 widthCompression.constant = size.width
                 width.constant = size.width
                 
-            }else{
+            } else {
                 xAxis.compression = node.width >= size.width ~ xAxis.compressionPriorty
                 xAxis.hugging =  node.width <= size.width ~ xAxis.huggingPriorty
             }
         }
         
-        if size.height != InvalidIntrinsicMetric{
+        if size.height != InvalidIntrinsicMetric {
             if let height = yAxis.hugging,
-               let heightCompression = yAxis.compression{
+               let heightCompression = yAxis.compression {
                 
                 heightCompression.constant = size.height
                 height.constant = size.height
                 
-            }else{
+            } else {
                 yAxis.compression = node.height >= size.height ~ yAxis.compressionPriorty
                 yAxis.hugging =  node.height <= size.height ~ yAxis.huggingPriorty
             }
@@ -174,7 +173,7 @@ final class SizeConstraints {
     /// update content size Constraint
     func updateSize(_ size: CGSize,node: Layoutable, priority: LayoutPriority = .strong) {
         if size.width != InvalidIntrinsicMetric {
-            if let width = width{
+            if let width = width {
                 width.constant = size.width
             } else {
                 width =  node.width == size.width ~ priority
@@ -182,9 +181,9 @@ final class SizeConstraints {
         }
         
         if size.height != InvalidIntrinsicMetric {
-            if let height = height{
+            if let height = height {
                 height.constant = size.height
-            }else{
+            } else {
                 height = node.height == size.height ~ priority
             }
         }

@@ -26,15 +26,14 @@ final public class Expression {
     }
 }
 
-extension Expression{
-    
-    var pivotableVar: Variable?{
+extension Expression {
+    var pivotableVar: Variable? {
         assert(!isConstant)
         return terms.keys.first{$0.isPivotable}
     }
     
     @discardableResult
-    func solve(for variable: Variable) -> Double{
+    func solve(for variable: Variable) -> Double {
         assert(terms.keys.contains(variable))
         let value = terms.removeValue(forKey: variable)!
         let reciprocal = 1/value
@@ -42,38 +41,37 @@ extension Expression{
         return reciprocal
     }
     
-    func changeSubject(from old: Variable, to: Variable){
+    func changeSubject(from old: Variable, to: Variable) {
         if old == to {
             return
         }
         terms[old] = solve(for: to)
     }
     
-    public func earse(_ variable: Variable){
+    public func earse(_ variable: Variable) {
         terms.removeValue(forKey: variable)
     }
     
-    public func coefficient(for variable: Variable) -> ValueType{
+    public func coefficient(for variable: Variable) -> ValueType {
         return terms[variable] ?? 0
     }
     
     // increase constant of e = c to e = c + value
     // present as e + (-c - value) = 0
-    func increaseConstant(by value: ValueType){
+    func increaseConstant(by value: ValueType) {
         constant += -value
     }
     
     // en.. hate to let solver appears in Expression class
     // but for performance reason, i have to do that
     func substituteOut(_ variable: Variable, with expr: Expression, solver: SimplexSolver? = nil, marker: Variable? = nil) {
-        guard let  coefficient = terms.removeValue(forKey: variable) else{
+        guard let  coefficient = terms.removeValue(forKey: variable) else {
             return
         }
         add(expr: expr, multiply: coefficient, solver: solver, marker: marker)
     }
     
-    func add(expr: Expression,multiply: Double = 1,solver: SimplexSolver? = nil, marker: Variable? = nil){
-        
+    func add(expr: Expression,multiply: Double = 1,solver: SimplexSolver? = nil, marker: Variable? = nil) {
         constant += expr.constant * multiply
         expr.terms.forEach {
             add($0.key, multiply: $0.value * multiply, solver: solver, marker: marker)
@@ -81,78 +79,78 @@ extension Expression{
     }
 }
 
-extension Expression{
-    public static func += (lhs: Expression, rhs: Variable){
+extension Expression {
+    public static func += (lhs: Expression, rhs: Variable) {
         lhs.add(rhs)
     }
     
-    public static func -= (lhs: Expression, rhs: Variable){
+    public static func -= (lhs: Expression, rhs: Variable) {
         lhs.add(rhs, multiply: -1)
     }
     
-    public static func += (lhs: Expression, rhs: Double){
+    public static func += (lhs: Expression, rhs: Double) {
         lhs.constant += rhs
     }
     
-    public static func -= (lhs: Expression, rhs: Double){
+    public static func -= (lhs: Expression, rhs: Double) {
         lhs += -rhs
     }
     
-    public static func += (lhs: Expression, rhs: Expression){
+    public static func += (lhs: Expression, rhs: Expression) {
         lhs.add(expr: rhs)
     }
     
-    public static func -= (lhs: Expression, rhs: Expression){
+    public static func -= (lhs: Expression, rhs: Expression) {
         lhs.minus(rhs)
     }
     
-    public static func *= (lhs: Expression, rhs: Double){
+    public static func *= (lhs: Expression, rhs: Double) {
         lhs.multiply(by: rhs)
     }
     
-    public static func /= (lhs: Expression, rhs: Double){
+    public static func /= (lhs: Expression, rhs: Double) {
         lhs.divide(by: rhs)
     }
     
-    public static func * (lhs: Expression, rhs: Double) -> Expression{
+    public static func * (lhs: Expression, rhs: Double) -> Expression {
         let expr = Expression()
         lhs.terms.forEach{ expr.add($0.key, multiply: $0.value * rhs)}
         expr.constant = lhs.constant * rhs
         return expr
     }
     
-    public static func / (lhs: Expression, rhs: Double) -> Expression{
+    public static func / (lhs: Expression, rhs: Double) -> Expression {
         return lhs * (1/rhs)
     }
     
-    public static func * (lhs: Double, rhs: Expression) -> Expression{
+    public static func * (lhs: Double, rhs: Expression) -> Expression {
         return rhs * lhs
     }
 }
 
-extension Expression{
-    private func multiply(by mul: ValueType){
+extension Expression {
+    private func multiply(by mul: ValueType) {
         constant *= mul
-        terms = terms.mapValues{ $0 * mul}
+        terms = terms.mapValues{ $0 * mul }
     }
     
-    private func divide(by div: ValueType){
+    private func divide(by div: ValueType) {
         assert(div == 0, "divide value can not be zero")
         multiply(by: 1/div)
     }
     
-    func add(_ variable: Variable, multiply: Double = 1, solver: SimplexSolver? = nil, marker: Variable? = nil){
-        if let value = terms[variable]{
-            if !nearZero(value + multiply){
+    func add(_ variable: Variable, multiply: Double = 1, solver: SimplexSolver? = nil, marker: Variable? = nil) {
+        if let value = terms[variable] {
+            if !nearZero(value + multiply) {
                 terms[variable] = value + multiply
-            }else{
+            } else {
                 terms.removeValue(forKey: variable)
-                if let marker = marker{
+                if let marker = marker {
                     solver?.removeValue(marker, from: variable)
                 }
             }
-        }else{
-            if !nearZero(multiply){
+        } else {
+            if !nearZero(multiply) {
                 terms[variable] = multiply
                 if let marker = marker{
                     solver?.addValue(marker, toColumn: variable)
@@ -161,7 +159,7 @@ extension Expression{
         }
     }
     
-    private func minus(_ exp: Expression){
+    private func minus(_ exp: Expression) {
         constant -= exp.constant
         exp.terms.forEach {
             add($0.key, multiply: -$0.value)
@@ -169,7 +167,7 @@ extension Expression{
     }
 }
 
-extension Expression: CustomDebugStringConvertible{
+extension Expression: CustomDebugStringConvertible {
     public var debugDescription: String{
         return terms.reduce("") { (temp, term) -> String in
             temp + "\(term.key)*\(term.value) + "

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ConstraintError: Error{
+public enum ConstraintError: Error {
     case requiredFailure
     case objectiveUnbound
     case constraintNotFound
@@ -21,7 +21,7 @@ private struct ConstraintInfo {
     }
 }
 
-final public class SimplexSolver{
+final public class SimplexSolver {
     
     // whether call solve() when add or remove constraint
     // if false ,remeber to call solve() to get right result
@@ -50,31 +50,31 @@ final public class SimplexSolver{
     
     public init() {}
     
-    public func add(constraint: Constraint) throws{
+    public func add(constraint: Constraint) throws {
         let expr = expression(for: constraint)
         let addedOKDirectly = tryToAdd(expr: expr)
         if !addedOKDirectly{
             let result = try addArtificalVariable(to: expr)
-            if !result.0{
+            if !result.0 {
                 try remove(constraint: constraint)
                 throw ConstraintError.requiredFailureWithExplanation(result.1)
             }
         }
-        if autoSolve{
+        if autoSolve {
             try solve()
         }
     }
     
     public func remove(constraint: Constraint) throws {
-        guard let info = constraintInfos[constraint] else{
+        guard let info = constraintInfos[constraint] else {
             throw ConstraintError.constraintNotFound
         }
         
         // remove errorVar from objective function
-        info.errors.forEach{
+        info.errors.forEach {
             add(expr: objective, variable: $0, delta: -constraint.weight)
             entryVars.remove($0)
-            if isBasicVar($0){
+            if isBasicVar($0) {
                 removeRow(for: $0)
             }
         }
@@ -83,18 +83,17 @@ final public class SimplexSolver{
         let marker = info.marker
         constraintMarkered.removeValue(forKey: marker)
         
-        if !isBasicVar(marker){
-            
+        if !isBasicVar(marker) {
             if let exitVar = findExitVar(for: marker){
                 pivot(entry: marker, exit: exitVar)
             }
         }
         
-        if isBasicVar(marker){
+        if isBasicVar(marker) {
             removeRow(for: marker)
         }
         
-        if autoSolve{
+        if autoSolve {
             try solve()
         }
     }
@@ -104,18 +103,18 @@ final public class SimplexSolver{
     /// - Parameters:
     ///   - constraint: constraint to update
     ///   - value: target constant
-    public func updateConstant(for constraint: Constraint,to value: Double){
+    public func updateConstant(for constraint: Constraint,to value: Double) {
         assert(constraintInfos.keys.contains(constraint))
-        if  !constraintInfos.keys.contains(constraint){
+        if  !constraintInfos.keys.contains(constraint) {
             return
         }
         var delta = -(value + constraint.expression.constant)
         
-        if constraint.relation == .lessThanOrEqual{
+        if constraint.relation == .lessThanOrEqual {
             delta = (value - constraint.expression.constant)
         }
         
-        if approx(a: delta, b: 0){
+        if approx(a: delta, b: 0) {
             return
         }
         editConstant(for: constraint, delta: delta)
@@ -128,12 +127,12 @@ final public class SimplexSolver{
     /// - Parameters:
     ///   - constraint: constraint to update
     ///   - strength: target strength
-    public func updateStrength(for constraint: Constraint, to strength: Strength) throws{
-        if constraint.strength == strength{
+    public func updateStrength(for constraint: Constraint, to strength: Strength) throws {
+        if constraint.strength == strength {
             return
         }
         
-        guard let errorVars = constraintInfos[constraint]?.errors else{
+        guard let errorVars = constraintInfos[constraint]?.errors else {
             return
         }
         
@@ -146,22 +145,22 @@ final public class SimplexSolver{
             updateEntryIfNeeded(for: $0)
         }
         
-        if autoSolve{
+        if autoSolve {
             try solve()
         }
     }
     
     /// solver this simplex problem
-    public func solve() throws{
+    public func solve() throws {
         try optimize(objective)
     }
     
-    private func resolve(){
+    private func resolve() {
         _ = try? dualOptimize()
         infeasibleRows.removeAll()
     }
     
-    public func valueFor(_ variable: Variable) -> Double?{
+    public func valueFor(_ variable: Variable) -> Double? {
         return rows[variable]?.constant
     }
     
@@ -172,7 +171,7 @@ final public class SimplexSolver{
     //  this will increase value of s, decrease the value of expr
     /// - Parameter row: expression to optimize
     /// - Throws:
-    private func optimize(_ row: Expression) throws{
+    private func optimize(_ row: Expression) throws {
         var entry: Variable? = nil
         var exit: Variable? = nil
         
@@ -181,57 +180,57 @@ final public class SimplexSolver{
             exit = nil
             
             // use entryVars to find entry for objective to avoid traverse
-            if row === objective{
+            if row === objective {
                 entry = entryVars.popFirst()
-            }else{
+            } else {
                 entry = row.terms.first{ $0.key.isPivotable && $0.value < 0 }?.key
             }
             
-            guard let entry = entry else{
+            guard let entry = entry else {
                 return
             }
             
             var minRadio = Double.greatestFiniteMagnitude
             var r = 0.0
             
-            columns[entry]?.value.forEach{
-                if !$0.isPivotable{
+            columns[entry]?.value.forEach {
+                if !$0.isPivotable {
                     return
                 }
                 let expr = rows[$0]!
                 let coeff = expr.coefficient(for: entry)
                 
-                if coeff > 0{
+                if coeff > 0 {
                     return
                 }
                 
-                r = -expr.constant/coeff
+                r = -expr.constant / coeff
                 
-                if r < minRadio{
+                if r < minRadio {
                     minRadio = r
                     exit = $0
                 }
             }
             
-            if minRadio == .greatestFiniteMagnitude{
+            if minRadio == .greatestFiniteMagnitude {
                 throw ConstraintError.objectiveUnbound
             }
-            if let exit = exit{
+            if let exit = exit {
                 pivot(entry: entry, exit: exit)
             }
         }
     }
     
-    private func dualOptimize() throws{
+    private func dualOptimize() throws {
         while !infeasibleRows.isEmpty {
             let exitVar = infeasibleRows.removeFirst()
             
-            if !isBasicVar(exitVar){
+            if !isBasicVar(exitVar) {
                 continue
             }
             
             let expr = rowExpression(for: exitVar)
-            if expr.constant >= 0{
+            if expr.constant >= 0 {
                 continue
             }
             
@@ -239,17 +238,17 @@ final public class SimplexSolver{
             var r = 0.0
             var entryVar: Variable? = nil
             
-            for (v, c) in expr.terms{
-                if c > 0 && v.isPivotable{
+            for (v, c) in expr.terms {
+                if c > 0 && v.isPivotable {
                     r = objective.coefficient(for: v)/c
-                    if r < ratio{
+                    if r < ratio {
                         entryVar = v
                         ratio = r
                     }
                 }
             }
             
-            guard let entry = entryVar else{
+            guard let entry = entryVar else {
                 throw  ConstraintError.internalError("dual_optimize: no pivot found")
             }
             
@@ -265,7 +264,7 @@ final public class SimplexSolver{
     /// - Parameters:
     ///   - entry: variable to become basic var
     ///   - exit: variable to exit from basic var
-    private func pivot(entry: Variable, exit: Variable){
+    private func pivot(entry: Variable, exit: Variable) {
         let expr = removeRow(for: exit)
         expr.changeSubject(from: exit, to: entry)
         substituteOut(old: entry, expr: expr)
@@ -276,7 +275,7 @@ final public class SimplexSolver{
     /// try to add expr to tableu
     /// - Parameter expr: expression to add
     /// - Returns: if we can't find a variable in expr to become basic, return false; else return true
-    private func tryToAdd(expr: Expression) -> Bool{
+    private func tryToAdd(expr: Expression) -> Bool {
         guard let subject = chooseSubject(expr: expr) else{
             return false
         }
@@ -293,22 +292,21 @@ final public class SimplexSolver{
     /// else return nil
     /// - Parameter expr: expr to choose subject from
     /// - Returns: subject to become basic
-    private func chooseSubject(expr: Expression) -> Variable?{
-        
+    private func chooseSubject(expr: Expression) -> Variable? {
         var subject: Variable? = nil
         var subjectExternal: Variable? = nil
-        for (variable, coeff) in expr.terms{
-            if variable.isExternal{
-                if !variable.isRestricted{
+        for (variable, coeff) in expr.terms {
+            if variable.isExternal {
+                if !variable.isRestricted {
                     return variable
-                }else if coeff < 0 || expr.constant == 0{
+                } else if coeff < 0 || expr.constant == 0 {
                     subjectExternal = variable
                 }
-            }else if variable.isPivotable && coeff < 0{
+            } else if variable.isPivotable && coeff < 0 {
                 subject = variable
             }
         }
-        if subjectExternal != nil{
+        if subjectExternal != nil {
             return subjectExternal
         }
         return subject
@@ -325,23 +323,23 @@ final public class SimplexSolver{
         if !nearZero(expr.constant){
             // there may be problem here
             removeColumn(for: av)
-            if explainFailure{
+            if explainFailure {
                 return (false, buildExplanation(for: av, row: expr))
             }
             return (false, [Constraint]())
         }
         
-        if isBasicVar(av){
+        if isBasicVar(av) {
             let expr = rowExpression(for: av)
             
-            if expr.isConstant{
+            if expr.isConstant {
                 assert(nearZero(expr.constant))
                 removeRow(for: av)
                 return (true, [Constraint]())
             }
             
             // this is different with the original implement,but it does't make sense to return false
-            guard let entry = expr.pivotableVar else{
+            guard let entry = expr.pivotableVar else {
                 return (true, [Constraint]())
             }
             pivot(entry: entry, exit: av)
@@ -352,15 +350,15 @@ final public class SimplexSolver{
         return (true, [Constraint]())
     }
     
-    private func buildExplanation(for marker: Variable, row: Expression) -> [Constraint]{
+    private func buildExplanation(for marker: Variable, row: Expression) -> [Constraint] {
         var explanation = [Constraint]()
         
-        if let constraint = constraintMarkered[marker]{
+        if let constraint = constraintMarkered[marker] {
             explanation.append(constraint)
         }
         
-        for variable in row.terms.keys{
-            if let constraint = constraintMarkered[variable]{
+        for variable in row.terms.keys {
+            if let constraint = constraintMarkered[variable] {
                 explanation.append(constraint)
             }
         }
@@ -373,7 +371,7 @@ final public class SimplexSolver{
     /// this will replace all basic var in constraint.expr with related expression
     /// add slack and dummpy var if necessary
     /// - Parameter constraint: constraint to be represented
-    private func expression(for constraint: Constraint) -> Expression{
+    private func expression(for constraint: Constraint) -> Expression {
         
         let expr = Expression()
         
@@ -387,7 +385,7 @@ final public class SimplexSolver{
         var marker: Variable!
         var errors = [Variable]()
         
-        if constraint.isInequality{
+        if constraint.isInequality {
             // if is Inequality,add slack var
             // expr <(>)= 0 to expr - slack = 0
             let slack = Variable.slack()
@@ -425,35 +423,35 @@ final public class SimplexSolver{
         constraintInfos[constraint] =  ConstraintInfo(marker: marker, errors: errors)
         constraintMarkered[marker] = constraint
         
-        if expr.constant < 0{
+        if expr.constant < 0 {
             expr *= -1
         }
         return expr
     }
     
     
-    private func editConstant(for constraint: Constraint,delta: Double){
+    private func editConstant(for constraint: Constraint,delta: Double) {
         let info = constraintInfos[constraint]!
         let marker = info.marker
         
-        if isBasicVar(marker){
+        if isBasicVar(marker) {
             let expr = rowExpression(for: marker)
             expr.increaseConstant(by: -delta)
-            if expr.constant < 0{
+            if expr.constant < 0 {
                 infeasibleRows.insert(marker)
             }
-        }else{
-            columns[marker]?.value.forEach{
+        } else {
+            columns[marker]?.value.forEach {
                 let expr = rows[$0]!
                 expr.increaseConstant(by: expr.coefficient(for: marker)*delta)
-                if $0.isRestricted && expr.constant < 0{
+                if $0.isRestricted && expr.constant < 0 {
                     infeasibleRows.insert($0)
                 }
             }
         }
     }
     
-    private func rowExpression(for marker: Variable) -> Expression{
+    private func rowExpression(for marker: Variable) -> Expression {
         assert(rows.keys.contains(marker))
         return rows[marker]!
     }
@@ -463,7 +461,7 @@ final public class SimplexSolver{
     /// this will travese all rows contains v
     /// choose one that coefficient
     /// - Returns: variable to become parametic
-    private func findExitVar(for v: Variable) -> Variable?{
+    private func findExitVar(for v: Variable) -> Variable? {
         
         var minRadio1 = Double.greatestFiniteMagnitude
         var minRadio2 = Double.greatestFiniteMagnitude
@@ -475,18 +473,18 @@ final public class SimplexSolver{
             let expr = rows[variable]!
             let c = expr.coefficient(for: v)
             
-            if variable.isExternal{
+            if variable.isExternal {
                 exitVar3 = variable
             }
             else if c < 0{
-                let r = -expr.constant/c
+                let r = -expr.constant / c
                 if r < minRadio1{
                     minRadio1 = r
                     exitVar1 = variable
                 }
             }else{
-                let r = -expr.constant/c
-                if r < minRadio2{
+                let r = -expr.constant / c
+                if r < minRadio2 {
                     minRadio2 = r
                     exitVar2 = variable
                 }
@@ -494,10 +492,10 @@ final public class SimplexSolver{
         })
         
         var exitVar = exitVar1
-        if exitVar == nil{
-            if exitVar2 == nil{
+        if exitVar == nil {
+            if exitVar2 == nil {
                 exitVar = exitVar3
-            }else{
+            } else {
                 exitVar = exitVar2
             }
         }
@@ -506,22 +504,22 @@ final public class SimplexSolver{
     
     // add delta*variable to expr
     // if variable is basicVar, replace variable with expr
-    private func add(expr: Expression, variable: Variable, delta: Double){
-        if isBasicVar(variable){
+    private func add(expr: Expression, variable: Variable, delta: Double) {
+        if isBasicVar(variable) {
             let row = rowExpression(for: variable)
             expr.add(expr: row ,multiply: delta)
-        }else{
+        } else {
             expr.add(variable, multiply: delta)
         }
     }
     
-    private  func addRow(header: Variable, expr: Expression){
+    private  func addRow(header: Variable, expr: Expression) {
         rows[header] = expr
         expr.terms.keys.forEach{ addValue(header, toColumn: $0) }
     }
     
     @discardableResult
-    private func removeRow(for marker: Variable) -> Expression{
+    private func removeRow(for marker: Variable) -> Expression {
         assert(rows.keys.contains(marker))
         infeasibleRows.remove(marker)
         let expr = rows.removeValue(forKey: marker)!
@@ -529,8 +527,7 @@ final public class SimplexSolver{
         return expr
     }
     
-    fileprivate func removeColumn(for key: Variable){
-        
+    fileprivate func removeColumn(for key: Variable) {
         columns[key]?.value.forEach {
             rows[$0]?.earse(key)
         }
@@ -539,20 +536,20 @@ final public class SimplexSolver{
         return
     }
     
-    func addValue(_ value: Variable, toColumn key: Variable){
-        if let column = columns[key]{
+    func addValue(_ value: Variable, toColumn key: Variable) {
+        if let column = columns[key] {
             column.value.insert(value)
-        }else{
+        } else {
             columns[key] = VarSet([value])
         }
     }
     
-    func removeValue(_ value: Variable, from key: Variable){
-        guard let column = columns[key] else{
+    func removeValue(_ value: Variable, from key: Variable) {
+        guard let column = columns[key] else {
             return
         }
         column.value.remove(value)
-        if column.value.isEmpty{
+        if column.value.isEmpty {
             columns.removeValue(forKey: key)
         }
     }
@@ -563,8 +560,8 @@ final public class SimplexSolver{
     /// - Parameters:
     ///   - old: variable to be replaced
     ///   - expr: expression to replace
-    private  func substituteOut(old: Variable, expr: Expression){
-        columns[old]?.value.forEach{
+    private  func substituteOut(old: Variable, expr: Expression) {
+        columns[old]?.value.forEach {
             let rowExpr = rows[$0]!
             rowExpr.substituteOut(old, with: expr,solver: self,marker: $0)
             if $0.isRestricted && rowExpr.constant < 0{
@@ -574,18 +571,17 @@ final public class SimplexSolver{
         columns.removeValue(forKey: old)
         objective.substituteOut(old, with: expr)
         
-        expr.terms.forEach{
+        expr.terms.forEach {
             updateEntryIfNeeded(for: $0.key)
         }
-        
     }
     
-    func updateEntryIfNeeded(for variable: Variable){
+    func updateEntryIfNeeded(for variable: Variable) {
         if variable.isPivotable{
             let c = objective.coefficient(for: variable)
             if c == 0{
                 entryVars.remove(variable)
-            }else if c < 0 {
+            } else if c < 0 {
                 entryVars.insert(variable)
             }
         }
@@ -602,7 +598,7 @@ final public class SimplexSolver{
     public func printRow() {
         print("=============== ROW ===============")
         print("objctive = \(objective)")
-        for (v, expr) in rows{
+        for (v, expr) in rows {
             print("V: \(v) = \(expr)")
         }
     }

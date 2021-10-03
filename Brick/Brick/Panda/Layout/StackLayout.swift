@@ -78,7 +78,7 @@ open class StackLayoutNode: ViewNode {
     }
     
     public func removeArrangedSubnode(_ node: ViewNode) {
-        if let index = arrangedSubnodes.index(of: node){
+        if let index = arrangedSubnodes.index(of: node) {
             arrangedSubnodes.remove(at: index)
         }
         aligmentArrangment.removeItem(node)
@@ -128,8 +128,8 @@ class StackLayoutArrangement {
         items.append(node)
     }
     
-    func removeItem(_ node: ViewNode){
-        if let index = items.index(of: node){
+    func removeItem(_ node: ViewNode) {
+        if let index = items.index(of: node) {
             items.remove(at: index)
         }
     }
@@ -221,61 +221,51 @@ class StackLayoutDistributionArrangement: StackLayoutArrangement {
     let relatedDimensionConstraints = ConstraintMapper.weakToWeakObjects()
     let hiddingDimensionConstraints = ConstraintMapper.weakToWeakObjects()
     
-    var edgeToEdgeRelation: Relation{
+    var edgeToEdgeRelation: Relation {
         switch distribution {
-        case .equalCentering:
-            return .greateThanOrEqual
-        default:
-            return .equal
+        case .equalCentering: return .greateThanOrEqual
+        default: return .equal
         }
     }
     
-    var minAttributeForGapConstraint: LayoutAttribute{
+    var minAttributeForGapConstraint: LayoutAttribute {
         switch axis {
-        case .horizontal:
-            return .left
-        case .vertical:
-            return .top
+        case .horizontal: return .left
+        case .vertical: return .top
         }
     }
     
-    func resetFillEffect(){
-        
+    func resetFillEffect() {
         items.traverse { (preNode, currentNode) -> (LayoutConstraint) in
             var multiply: CGFloat = 1
             if distribution == .fillProportionally{
                 let size1 = preNode.itemIntrinsicContentSize
                 let size2 = currentNode.itemIntrinsicContentSize
-                switch axis{
-                case .horizontal:
-                    multiply = size2.width / size1.width
-                case .vertical:
-                    multiply = size2.height/size1.height
+                switch axis {
+                case .horizontal: multiply = size2.width / size1.width
+                case .vertical: multiply = size2.height/size1.height
                 }
             }
             
-            switch axis{
-            case .horizontal:
-                return currentNode.width == preNode.width * multiply
-            case .vertical:
-                return currentNode.height == preNode.height * multiply
+            switch axis {
+            case .horizontal: return currentNode.width == preNode.width * multiply
+            case .vertical: return currentNode.height == preNode.height * multiply
             }
         }
     }
     
-    func resetEquallyEffect(){
-        
-        if items.count < 1{
+    func resetEquallyEffect() {
+        if items.count < 1 {
             return
         }
         
         let guardView = canvas!
         
-        if axis == .horizontal{
+        if axis == .horizontal {
             items.first!.left == guardView.left
             items.last!.right == guardView.right
             items.space(space,axis:.horizontal)
-        }else{
+        } else {
             items.first!.top == guardView.top
             items.last!.bottom == guardView.bottom
             items.space(space,axis:.vertical)
@@ -283,7 +273,6 @@ class StackLayoutDistributionArrangement: StackLayoutArrangement {
     }
     
     override func updateConstraintIfNeed() {
-        
         resetEquallyEffect()
         switch distribution {
         case .fillEqually,.fillProportionally: resetFillEffect()

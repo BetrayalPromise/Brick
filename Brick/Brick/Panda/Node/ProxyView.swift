@@ -32,12 +32,12 @@ class ProxyView: UIView {
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if !inHitTest{
+        if !inHitTest {
             inHitTest = true
             let hitTestView = node?.hitTest(point, with: event)
             inHitTest = false
             return hitTestView
-        }else{
+        } else {
             return super.hitTest(point, with: event)
         }
     }
@@ -46,12 +46,12 @@ class ProxyView: UIView {
         guard let node = node else{
             return false
         }
-        if !inPointInside{
+        if !inPointInside {
             inPointInside = true
             let pointInside = node.point(inside:point, with:event)
             inPointInside = false
             return pointInside
-        }else{
+        } else {
             return super.point(inside: point, with: event)
         }
     }
@@ -72,23 +72,23 @@ class ProxyView: UIView {
         node?.touchesEnded(touches, with: event)
     }
     
-    open func forwardGestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool{
+    open func forwardGestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
     
-    open func forwardTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func forwardTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
     }
     
-    open func forwardTouchesMoved(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func forwardTouchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
     }
     
-    open func forwardTouchesEnded(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func forwardTouchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
     }
     
-    open func forwardTouchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?){
+    open func forwardTouchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesCancelled(touches, with: event)
     }
     

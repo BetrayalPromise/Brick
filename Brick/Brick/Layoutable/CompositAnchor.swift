@@ -32,7 +32,7 @@ final public class SizeAnchor: CompositAnchor {
 
 typealias PositionAttributes = (x: LayoutAttribute, y: LayoutAttribute)
 
-final public class PositionAnchor: CompositAnchor{
+final public class PositionAnchor: CompositAnchor {
     
     let attributes: PositionAttributes
     
@@ -230,7 +230,7 @@ public func == (lhs: EdgeAnchor, rhs: CompositExpression<EdgeAnchor, EdgeInsets>
     return lhs.equalTo(rhs.anchor.item, insets: rhs.value)
 }
 
-public extension Array where Element: Layoutable{
+public extension Array where Element: Layoutable {
     
     typealias LayoutAction = (_ pre: Layoutable, _ current: Layoutable) -> (LayoutConstraint)
     
