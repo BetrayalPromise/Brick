@@ -9,6 +9,7 @@ open class BaseLayout: UIView {
     /// 布局内边距,向内为正值向外为负值
     public var padding: UIEdgeInsets = .zero
     
+    /// debug开关
     public var debug: Bool = true
     
     open override func draw(_ rect: CGRect) {
@@ -35,6 +36,10 @@ open class BaseLayout: UIView {
             context.strokePath()
             context.restoreGState()
         }
+    }
+
+    deinit {
+        print(#function)
     }
     
     open override func layoutSubviews() {

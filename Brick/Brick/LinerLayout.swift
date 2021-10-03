@@ -47,10 +47,6 @@ open class LinnerLayout: BaseLayout {
         self.axie = axie
     }
     
-    deinit {
-        print(#function)
-    }
-    
     open override func addSubview(_ view: UIView) {
         super.addSubview(view)
         self.handles.append(view)

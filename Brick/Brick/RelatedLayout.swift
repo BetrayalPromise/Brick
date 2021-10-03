@@ -1,14 +1,9 @@
-import Foundation
-import CoreGraphics
 import UIKit
 
-/// 布局尺寸处理
-public enum LayoutScope {
-    case safeArea
-    case bounds
-}
-
-open class ScopeLayout: BaseLayout {
+open class RelatedLayout: BaseLayout {
+    var handles: [UIView] = []
+    
+    /// 必须先将视图添加到父视图上再设置
     public var scope: LayoutScope = .safeArea {
         didSet {
             if #available(iOS 11, *) {
@@ -31,5 +26,14 @@ open class ScopeLayout: BaseLayout {
                 print("不支持之前的UIViewController.topLayoutGuide和UIViewController.bottomLayoutGuide")
             }
         }
+    }
+    
+    open override func addSubview(_ view: UIView) {
+        super.addSubview(view)
+        self.handles.append(view)
+    }
+    
+    open override func layoutSubviews() {
+        super.layoutSubviews()
     }
 }
